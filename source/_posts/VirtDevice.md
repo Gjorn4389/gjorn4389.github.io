@@ -24,7 +24,6 @@ TODO
     ![PCI拓扑关系](https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/vfio/cpu_pci_topology.png)
 4. 确定访问设备：管脚 `IDSEL` 选定目标 PCI 设备，仅需要确定 `Function Number` 和 `Registers Number`
 
-
 ## 模拟PCI设备配置空间
 
 ### 确定寄存器地址
@@ -38,3 +37,17 @@ TODO
 2. `device__register` 将设备注册到 rbtree上，根据 dev_num 来排序，方便检索
 
 # 设备透传
+
+## SR-IVO 标准
+> Single Root I/O Virtualization and Sharing
+1. 设备分为 PF(Physical Function) 和 VF(Virtual Function)，硬件实现，一个SR-IOV可以支持多个VF，每个VF透传给Guest
+2. 每个VF都有独立的用于数据传输的存储空间、队列、中断及命令处理单元，由VMM管理
+3. 虚拟机通过VF驱动直接访问物理设备，也可以通过SR-IOV设备的PF结构共享物理设备
+
+## 虚拟配置空间
+> 安全考虑Guest不能直接修改配置空间，VMM作为代理对配置空间进行修改
+1. Host的BIOS会分配PCI设备的BAR空间，Guest不能直接访问，需要VMM负责映射
+2. VF-BAR ---> HPA ---> GPA，VMM只需要完成GPA到HVA的映射
+3. 配置空间与数据面隔离，不会影响数据效率
+
+## DMA重映射
