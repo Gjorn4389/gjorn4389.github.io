@@ -24,5 +24,17 @@ TODO
     ![PCI拓扑关系](https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/vfio/cpu_pci_topology.png)
 4. 确定访问设备：管脚 `IDSEL` 选定目标 PCI 设备，仅需要确定 `Function Number` 和 `Registers Number`
 
-## 模拟pci设备配置空间
-> kvmtool
+
+## 模拟PCI设备配置空间
+
+### 确定寄存器地址
+> kvmtool 实现
+1. 计算 pci_config_address_ptr = &pci_config_address + addr - PCI_CONFIG_ADDRESS
+2. 通过 pci_config_address_ptr 来修改配置空间
+
+## 模拟PCI设备BAR
+1. `pci_get_mmio_block` 为PCI设备分配内存地址：内存对齐、记录 mmio_blocks 方便后续分配
+    ![kvmtool_pci_bar](https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/kvmtool_pci_bar.png)
+2. `device__register` 将设备注册到 rbtree上，根据 dev_num 来排序，方便检索
+
+# 设备透传
