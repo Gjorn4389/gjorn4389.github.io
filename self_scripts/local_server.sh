@@ -1,1 +1,1 @@
-hexo clean && hexo generate && hexo server
+hexo clean && hexo generate && hexo server -p 4882
