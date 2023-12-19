@@ -7,3 +7,7 @@ Handbook
 2. 运行服务：`hexo server`
 3. 生成静态文件：`hexo generate`
 4. 部署到远端：`hexo deploy`
+
+# 部署博客
+1. 安装 Npm、Hexo
+2. 在source分支执行`npm install`
