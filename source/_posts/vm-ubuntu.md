@@ -1,5 +1,5 @@
 ---
-title: vm_ubuntu
+title: vms over ubuntu
 date: 2023-12-20 02:31:41
 tags: libvirt
 ---
