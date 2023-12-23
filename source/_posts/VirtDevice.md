@@ -51,3 +51,18 @@ TODO
 3. 配置空间与数据面隔离，不会影响数据效率
 
 ## DMA重映射
+1. 背景：防止 Guest DMA 恶意破坏内存
+2. 原理：
+    + 为 Guest 建立页表（DMA Table，由多个设备共享），页表限制了设备可以访问的内存
+    + DMA重映射硬件 根据BDF号确定页表，找到HPA
+    + DMA重映射硬件 为外设进行IO地址翻译，也叫IOMMU
+3. kvmtool 实现：
+    + kvmtool 为 Guest准备多个内存段，提供给外设使用
+    + `VFIO_IOMMU_MAP_DMA`：在DMA重映射页表中建立映射关系
+    + 内核通知外设进行DMA前，需要把虚拟地址转换为物理地址（通过dma_map的iova、vaddr）
+    + 内核创建 IOMMU 的页表，会将VA转成PA，其中记录的是GPA到HPA的映射
+    ![kvmtool中的dma映射](https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/kvmtool_dma_map.png)
+
+## 中断重映射
+1. 背景：避免虚机向其他虚机发送恶意中断
+2. 原理：硬件中断重映射单元 对中断进行有效性验证，以中断号为索引查询中断重映射表，代替外设转发中断信号，目的虚机由BDF确定
