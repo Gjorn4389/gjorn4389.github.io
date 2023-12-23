@@ -1,5 +1,6 @@
+message=$1
 time=$(date +"%Y-%m-%d %H:%M:%S")
-commit_message="update posts at $time"
+commit_message="update posts at $time.$message"
 
 # 添加文件到暂存区
 git add ..
