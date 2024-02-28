@@ -36,25 +36,6 @@
   
   
   <entry>
-    <title>snipaste picgo ubuntu</title>
-    <link href="/2023/12/22/snipaste-picgo-ubuntu/"/>
-    <url>/2023/12/22/snipaste-picgo-ubuntu/</url>
-    
-    <content type="html"><![CDATA[<h1 id="flameshot-ubuntu-截图工具"><a href="#flameshot-ubuntu-截图工具" class="headerlink" title="flameshot ubuntu 截图工具"></a>flameshot ubuntu 截图工具</h1><p><code>sudo apt install flameshot</code></p><h1 id="Picgo"><a href="#Picgo" class="headerlink" title="Picgo"></a>Picgo</h1><ol><li><a href="https://github.com/Molunerfinn/PicGo">PicGo客户端</a></li><li>下载 AppImage 格式 </li><li>添加到 Applications<ul><li><code>vim /usr/share/applications/picgo.desktop</code> <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[Desktop Entry]</span><br><span class="hljs-attr">Type</span>=Application<br><span class="hljs-attr">Name</span>=picGo<br><span class="hljs-attr">Exec</span>=/path/to/picgo/PicGo-<span class="hljs-number">2.3</span>.<span class="hljs-number">1</span>.AppImage<br><span class="hljs-attr">Terminal</span>=<span class="hljs-literal">false</span><br></code></pre></td></tr></table></figure></li></ul></li></ol><h1 id="AppImage-缺少-libfuse2-依赖"><a href="#AppImage-缺少-libfuse2-依赖" class="headerlink" title="AppImage 缺少 libfuse2 依赖"></a>AppImage 缺少 libfuse2 依赖</h1><p><code>sudo apt install libfuse2</code></p>]]></content>
-    
-    
-    
-    <tags>
-      
-      <tag>ubuntu picgo</tag>
-      
-    </tags>
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>auto-ssh</title>
     <link href="/2023/12/22/auto-ssh/"/>
     <url>/2023/12/22/auto-ssh/</url>
@@ -66,6 +47,25 @@
     <tags>
       
       <tag>shell expect</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>snipaste picgo ubuntu</title>
+    <link href="/2023/12/22/snipaste-picgo-ubuntu/"/>
+    <url>/2023/12/22/snipaste-picgo-ubuntu/</url>
+    
+    <content type="html"><![CDATA[<h1 id="flameshot-ubuntu-截图工具"><a href="#flameshot-ubuntu-截图工具" class="headerlink" title="flameshot ubuntu 截图工具"></a>flameshot ubuntu 截图工具</h1><p><code>sudo apt install flameshot</code></p><h1 id="Picgo"><a href="#Picgo" class="headerlink" title="Picgo"></a>Picgo</h1><ol><li><a href="https://github.com/Molunerfinn/PicGo">PicGo客户端</a></li><li>下载 AppImage 格式 </li><li>添加到 Applications<ul><li><code>vim /usr/share/applications/picgo.desktop</code> <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[Desktop Entry]</span><br><span class="hljs-attr">Type</span>=Application<br><span class="hljs-attr">Name</span>=picGo<br><span class="hljs-attr">Exec</span>=/path/to/picgo/PicGo-<span class="hljs-number">2.3</span>.<span class="hljs-number">1</span>.AppImage<br><span class="hljs-attr">Terminal</span>=<span class="hljs-literal">false</span><br></code></pre></td></tr></table></figure></li></ul></li></ol><h1 id="AppImage-缺少-libfuse2-依赖"><a href="#AppImage-缺少-libfuse2-依赖" class="headerlink" title="AppImage 缺少 libfuse2 依赖"></a>AppImage 缺少 libfuse2 依赖</h1><p><code>sudo apt install libfuse2</code></p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>ubuntu picgo</tag>
       
     </tags>
     
