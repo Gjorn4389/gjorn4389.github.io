@@ -36,25 +36,6 @@
   
   
   <entry>
-    <title>auto-ssh</title>
-    <link href="/2023/12/22/auto-ssh/"/>
-    <url>/2023/12/22/auto-ssh/</url>
-    
-    <content type="html"><![CDATA[<h1 id="使用expect工具实现自动注入账号密码"><a href="#使用expect工具实现自动注入账号密码" class="headerlink" title="使用expect工具实现自动注入账号密码"></a>使用expect工具实现自动注入账号密码</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><br>if [ $# -ne 2 ]; then<br>    echo &quot;usage: sh copykey.sh hostip password &quot;<br>    exit 1<br>fi<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">判断id_rsa秘钥文件是否存在</span><br>if [ ! -f &quot;/root/.ssh/id_rsa&quot; ];then<br>    ssh-keygen -t rsa -P &quot;&quot; -f /root/.ssh/id_rsa<br>else<br>    echo &quot;id_rsa has created ......&quot;<br>fi<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">密码登录</span><br>user=&quot;root&quot;<br>ip=$1<br>passwd=$2<br>expect &lt;&lt;EOF<br>    set timeout 5<br>    spawn ssh-copy-id $user@$ip<br>    expect &#123;<br>        &quot;yes/no&quot; &#123; send &quot;yes\n&quot;;exp_continue &#125;<br>        &quot;password&quot; &#123; send &quot;$passwd\n&quot; &#125;<br>        &quot;installed&quot; &#123;  &#125; expect eof<br>    &#125;<br>EOF<br></code></pre></td></tr></table></figure>]]></content>
-    
-    
-    
-    <tags>
-      
-      <tag>shell expect</tag>
-      
-    </tags>
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>snipaste picgo ubuntu</title>
     <link href="/2023/12/22/snipaste-picgo-ubuntu/"/>
     <url>/2023/12/22/snipaste-picgo-ubuntu/</url>
@@ -66,6 +47,25 @@
     <tags>
       
       <tag>ubuntu picgo</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>auto-ssh</title>
+    <link href="/2023/12/22/auto-ssh/"/>
+    <url>/2023/12/22/auto-ssh/</url>
+    
+    <content type="html"><![CDATA[<h1 id="使用expect工具实现自动注入账号密码"><a href="#使用expect工具实现自动注入账号密码" class="headerlink" title="使用expect工具实现自动注入账号密码"></a>使用expect工具实现自动注入账号密码</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><br>if [ $# -ne 2 ]; then<br>    echo &quot;usage: sh copykey.sh hostip password &quot;<br>    exit 1<br>fi<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">判断id_rsa秘钥文件是否存在</span><br>if [ ! -f &quot;/root/.ssh/id_rsa&quot; ];then<br>    ssh-keygen -t rsa -P &quot;&quot; -f /root/.ssh/id_rsa<br>else<br>    echo &quot;id_rsa has created ......&quot;<br>fi<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">密码登录</span><br>user=&quot;root&quot;<br>ip=$1<br>passwd=$2<br>expect &lt;&lt;EOF<br>    set timeout 5<br>    spawn ssh-copy-id $user@$ip<br>    expect &#123;<br>        &quot;yes/no&quot; &#123; send &quot;yes\n&quot;;exp_continue &#125;<br>        &quot;password&quot; &#123; send &quot;$passwd\n&quot; &#125;<br>        &quot;installed&quot; &#123;  &#125; expect eof<br>    &#125;<br>EOF<br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>shell expect</tag>
       
     </tags>
     
