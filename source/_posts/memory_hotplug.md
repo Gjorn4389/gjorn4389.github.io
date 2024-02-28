@@ -4,7 +4,7 @@ date: 2024-2-27 13:33:26
 tags:
 ---
 
-热插内存主要流程
+# 热插内存主要流程
 |-- qemuDomainAttachDeviceLiveAndConfig
 |-- qemuDomainAttachDeviceLive
 |-- qemuDomainAttachMemory
@@ -14,7 +14,7 @@ tags:
     |-- virObjectEventStateQueue(**driver->domainEventState**, event);      等待分发
         |-- virObjectEventStateQueueRemote
 
-分发 event
+# 分发 event
 |-- virObjectEventStateFlush
     |-- virObjectEventStateQueueDispatch
         |-- virObjectEventStateDispatchCallbacks
@@ -22,7 +22,7 @@ tags:
         |-- event->dispatch(cb->conn, event, cb->cb, cb->opaque);
 
 
-创建 DeviceAdded Event Class
+## 创建 DeviceAdded Event Class
 VIR_CLASS_NEW(virDomainEventDeviceAdded, virDomainEventClass)
 ![virDomainEventDeviceAddedClass](https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/virDomainEventDeviceAddedClass.png)
 
