@@ -8,7 +8,7 @@
     <link href="/2024/02/27/memory_hotplug/"/>
     <url>/2024/02/27/memory_hotplug/</url>
     
-    <content type="html"><![CDATA[<h1 id="热插内存主要流程"><a href="#热插内存主要流程" class="headerlink" title="热插内存主要流程"></a>热插内存主要流程</h1><p>|– qemuDomainAttachDeviceLiveAndConfig<br>|– qemuDomainAttachDeviceLive<br>|– qemuDomainAttachMemory<br>    |– virDomainMemoryInsert<br>    |– event &#x3D; virDomainEventDeviceAddedNewFromObj(vm, objalias);      构造event<br>        |– virDomainEventDeviceAddedClass, VIR_DOMAIN_EVENT_ID_DEVICE_ADDED<br>    |– virObjectEventStateQueue(<strong>driver-&gt;domainEventState</strong>, event);      等待分发<br>        |– virObjectEventStateQueueRemote</p><h1 id="分发-event"><a href="#分发-event" class="headerlink" title="分发 event"></a>分发 event</h1><p>|– virObjectEventStateFlush<br>    |– virObjectEventStateQueueDispatch<br>        |– virObjectEventStateDispatchCallbacks<br>    |– virObjectEventCallbackListPurgeMarked(state-&gt;callbacks);<br>        |– event-&gt;dispatch(cb-&gt;conn, event, cb-&gt;cb, cb-&gt;opaque);</p><h2 id="创建-DeviceAdded-Event-Class"><a href="#创建-DeviceAdded-Event-Class" class="headerlink" title="创建 DeviceAdded Event Class"></a>创建 DeviceAdded Event Class</h2><p>VIR_CLASS_NEW(virDomainEventDeviceAdded, virDomainEventClass)<br><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/virDomainEventDeviceAddedClass.png" alt="virDomainEventDeviceAddedClass"></p><p>event-&gt;dispatch 一般都是 virDomainEventDispatchDefaultFunc 根据 event_id 分发，执行对应的函数<br><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/virObjectEvent_dispatch.png" alt="event-&gt;dispatch"></p><p>VIR_DOMAIN_EVENT_ID_DEVICE_ADDED  &lt;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;  virConnectDomainEventDeviceAddedCallback</p><p><a href="https://blog.csdn.net/Jacobsea/article/details/125616913">理解 event 监听</a></p>]]></content>
+    <content type="html"><![CDATA[<h1 id="热插内存主要流程"><a href="#热插内存主要流程" class="headerlink" title="热插内存主要流程"></a>热插内存主要流程</h1><p>|– qemuDomainAttachDeviceLiveAndConfig<br>|– qemuDomainAttachDeviceLive<br>|– qemuDomainAttachMemory<br>    |– virDomainMemoryInsert<br>    |– event &#x3D; virDomainEventDeviceAddedNewFromObj(vm, objalias);      构造event<br>        |– virDomainEventDeviceAddedClass, VIR_DOMAIN_EVENT_ID_DEVICE_ADDED<br>    |– virObjectEventStateQueue(<strong>driver-&gt;domainEventState</strong>, event);      等待分发<br>        |– virObjectEventStateQueueRemote</p><h1 id="分发-event"><a href="#分发-event" class="headerlink" title="分发 event"></a>分发 event</h1><p>|– virObjectEventStateFlush<br>    |– virObjectEventStateQueueDispatch<br>        |– virObjectEventStateDispatchCallbacks<br>    |– virObjectEventCallbackListPurgeMarked(state-&gt;callbacks);<br>        |– event-&gt;dispatch(cb-&gt;conn, event, cb-&gt;cb, cb-&gt;opaque);</p><h2 id="创建-DeviceAdded-Event-Class"><a href="#创建-DeviceAdded-Event-Class" class="headerlink" title="创建 DeviceAdded Event Class"></a>创建 DeviceAdded Event Class</h2><p>VIR_CLASS_NEW(virDomainEventDeviceAdded, virDomainEventClass)<br><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/virDomainEventDeviceAddedClass.png" alt="virDomainEventDeviceAddedClass"></p><p>event-&gt;dispatch 一般都是 virDomainEventDispatchDefaultFunc 根据 event_id 分发，执行对应的函数<br><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/virObjectEvent_dispatch.png" alt="event-&gt;dispatch"></p><p>VIR_DOMAIN_EVENT_ID_DEVICE_ADDED  &lt;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;  virConnectDomainEventDeviceAddedCallback</p><p><a href="https://blog.csdn.net/Jacobsea/article/details/125616913">理解 event 监听</a></p><h3 id="virEventRegisterDefaultImpl"><a href="#virEventRegisterDefaultImpl" class="headerlink" title="virEventRegisterDefaultImpl"></a>virEventRegisterDefaultImpl</h3><ol><li>基于 poll 的事件注册</li><li>必须使用 virEventRunDefaultImpl 来处理事件</li></ol><h3 id="注册Event的方法-virevent-c"><a href="#注册Event的方法-virevent-c" class="headerlink" title="注册Event的方法 virevent.c"></a>注册Event的方法 virevent.c</h3><p>virEventGLibRegisterOnce<br>    |<br>    |<br>    v<br>virEventRegisterImpl：注册了 HandleAdd、HandleUpdate、HandleRemove、TimeoutAdd、TimeoutUpdate、TimeoutRemove</p><p>virEventAddHandle<br>virEventUpdateHandle<br>virEventRemoveHandle<br>virEventAddTimeout<br>virEventUpdateTimeout<br>virEventRemoveTimeout</p><p><strong>vireventglib.c</strong> 定义glic实现的event操作函数</p><h3 id="qemu-driver-实现"><a href="#qemu-driver-实现" class="headerlink" title="qemu driver 实现"></a>qemu driver 实现</h3><p>qemuConnectDomainEventRegisterAny<br>|– virDomainEventStateRegisterID<br>    |– virDomainEventStateRegisterID</p><h3 id="调用方法函数"><a href="#调用方法函数" class="headerlink" title="调用方法函数"></a>调用方法函数</h3><ol><li>virConnectDomainEventRegisterAny: 增加回调函数用于处理事件<ul><li>需要使用 VIR_DOMAIN_EVENT_CALLBACK() 宏强制转换提供的函数指针，以匹配此方法的签名</li><li>virDomainPtr 只在回调函数执行期间有效，要保留对象，就需要 virDomainRef() 获取对域对象的引用</li></ul></li><li>virConnectDomainEventDeregisterAny: 移除事件回调</li><li>virConnectDomainEventRegister: 添加回调接受虚机生命周期通知</li><li>virConnectDomainEventDeregister: 删除回调函数</li><li>virDomainEventID: 事件id</li><li>virDomainEventType: 事件类型</li></ol>]]></content>
     
     
     
@@ -36,25 +36,6 @@
   
   
   <entry>
-    <title>auto-ssh</title>
-    <link href="/2023/12/22/auto-ssh/"/>
-    <url>/2023/12/22/auto-ssh/</url>
-    
-    <content type="html"><![CDATA[<h1 id="使用expect工具实现自动注入账号密码"><a href="#使用expect工具实现自动注入账号密码" class="headerlink" title="使用expect工具实现自动注入账号密码"></a>使用expect工具实现自动注入账号密码</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><br>if [ $# -ne 2 ]; then<br>    echo &quot;usage: sh copykey.sh hostip password &quot;<br>    exit 1<br>fi<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">判断id_rsa秘钥文件是否存在</span><br>if [ ! -f &quot;/root/.ssh/id_rsa&quot; ];then<br>    ssh-keygen -t rsa -P &quot;&quot; -f /root/.ssh/id_rsa<br>else<br>    echo &quot;id_rsa has created ......&quot;<br>fi<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">密码登录</span><br>user=&quot;root&quot;<br>ip=$1<br>passwd=$2<br>expect &lt;&lt;EOF<br>    set timeout 5<br>    spawn ssh-copy-id $user@$ip<br>    expect &#123;<br>        &quot;yes/no&quot; &#123; send &quot;yes\n&quot;;exp_continue &#125;<br>        &quot;password&quot; &#123; send &quot;$passwd\n&quot; &#125;<br>        &quot;installed&quot; &#123;  &#125; expect eof<br>    &#125;<br>EOF<br></code></pre></td></tr></table></figure>]]></content>
-    
-    
-    
-    <tags>
-      
-      <tag>shell expect</tag>
-      
-    </tags>
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>snipaste picgo ubuntu</title>
     <link href="/2023/12/22/snipaste-picgo-ubuntu/"/>
     <url>/2023/12/22/snipaste-picgo-ubuntu/</url>
@@ -66,6 +47,25 @@
     <tags>
       
       <tag>ubuntu picgo</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>auto-ssh</title>
+    <link href="/2023/12/22/auto-ssh/"/>
+    <url>/2023/12/22/auto-ssh/</url>
+    
+    <content type="html"><![CDATA[<h1 id="使用expect工具实现自动注入账号密码"><a href="#使用expect工具实现自动注入账号密码" class="headerlink" title="使用expect工具实现自动注入账号密码"></a>使用expect工具实现自动注入账号密码</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><br>if [ $# -ne 2 ]; then<br>    echo &quot;usage: sh copykey.sh hostip password &quot;<br>    exit 1<br>fi<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">判断id_rsa秘钥文件是否存在</span><br>if [ ! -f &quot;/root/.ssh/id_rsa&quot; ];then<br>    ssh-keygen -t rsa -P &quot;&quot; -f /root/.ssh/id_rsa<br>else<br>    echo &quot;id_rsa has created ......&quot;<br>fi<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">密码登录</span><br>user=&quot;root&quot;<br>ip=$1<br>passwd=$2<br>expect &lt;&lt;EOF<br>    set timeout 5<br>    spawn ssh-copy-id $user@$ip<br>    expect &#123;<br>        &quot;yes/no&quot; &#123; send &quot;yes\n&quot;;exp_continue &#125;<br>        &quot;password&quot; &#123; send &quot;$passwd\n&quot; &#125;<br>        &quot;installed&quot; &#123;  &#125; expect eof<br>    &#125;<br>EOF<br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>shell expect</tag>
       
     </tags>
     
