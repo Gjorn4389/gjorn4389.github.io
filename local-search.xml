@@ -33,33 +33,6 @@
   
   
   <entry>
-    <title>libvirt event</title>
-    <link href="/2024/02/27/libvirt_event/"/>
-    <url>/2024/02/27/libvirt_event/</url>
-    
-    <content type="html"><![CDATA[<h1 id="Event-事件机制"><a href="#Event-事件机制" class="headerlink" title="Event 事件机制"></a>Event 事件机制</h1><h2 id="事件注册"><a href="#事件注册" class="headerlink" title="事件注册"></a>事件注册</h2><h3 id="virEventRegisterDefaultImpl"><a href="#virEventRegisterDefaultImpl" class="headerlink" title="virEventRegisterDefaultImpl"></a>virEventRegisterDefaultImpl</h3><ol><li>基于 poll 的事件注册</li><li>必须使用 virEventRunDefaultImpl 来处理事件</li></ol><h3 id="注册Event的方法-virevent-c"><a href="#注册Event的方法-virevent-c" class="headerlink" title="注册Event的方法 virevent.c"></a>注册Event的方法 virevent.c</h3><p>virEventGLibRegisterOnce<br>    |<br>    |<br>    v<br>virEventRegisterImpl：注册了 HandleAdd、HandleUpdate、HandleRemove、TimeoutAdd、TimeoutUpdate、TimeoutRemove</p><ul><li>fd相关的handler<ul><li>virEventAddHandle</li><li>virEventUpdateHandle</li><li>virEventRemoveHandle</li></ul></li><li>virConnectDomainEventRegisterAny() 类似的接口需要注册以下3个Timeout函数<ul><li>virEventAddTimeout</li><li>virEventUpdateTimeout</li><li>virEventRemoveTimeout</li></ul></li></ul><p><strong>vireventglib.c</strong> 定义glic实现的event操作函数</p><h3 id="调用方法函数"><a href="#调用方法函数" class="headerlink" title="调用方法函数"></a>调用方法函数</h3><ol><li>virConnectDomainEventRegisterAny: 增加回调函数用于处理事件<ul><li>需要使用 VIR_DOMAIN_EVENT_CALLBACK() 宏强制转换提供的函数指针，以匹配此方法的签名</li><li>virDomainPtr 只在回调函数执行期间有效，要保留对象，就需要 virDomainRef() 获取对域对象的引用</li></ul></li><li>virConnectDomainEventDeregisterAny: 移除事件回调</li><li>virConnectDomainEventRegister: 添加回调接受虚机生命周期通知</li><li>virConnectDomainEventDeregister: 删除回调函数</li><li>virDomainEventID: 事件id</li><li>virDomainEventType: 事件类型</li></ol><h2 id="事件处理"><a href="#事件处理" class="headerlink" title="事件处理"></a>事件处理</h2><h3 id="注册事件处理函数"><a href="#注册事件处理函数" class="headerlink" title="注册事件处理函数"></a>注册事件处理函数</h3><p>domainEventCallbacks[]</p><p>qemuProcessEventHandler ：添加线程池工作函数</p><h3 id="分发-event，定时处理"><a href="#分发-event，定时处理" class="headerlink" title="分发 event，定时处理"></a>分发 event，定时处理</h3><p>|– virEventAddTimeout(virObjectEventTimer, …)<br>    |– virObjectEventStateFlush<br>        |– virObjectEventStateQueueDispatch(state, tempQueue, state-&gt;callbacks)<br>            |– virObjectEventStateDispatchCallbacks                           &lt;—- 找合适的callback，处理event<br>                |– virObjectEventDispatchMatchCallback<br>                |– event-&gt;dispatch(cb-&gt;conn, event, cb-&gt;cb, cb-&gt;opaque);      &lt;—- callback处理事件<br>        |– virObjectEventCallbackListPurgeMarked(state-&gt;callbacks);<br>        |– virObjectEventStateCleanupTimer</p><h2 id="创建-DeviceAdded-Event-Class"><a href="#创建-DeviceAdded-Event-Class" class="headerlink" title="创建 DeviceAdded Event Class"></a>创建 DeviceAdded Event Class</h2><p>VIR_CLASS_NEW(virDomainEventDeviceAdded, virDomainEventClass)<br><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/virDomainEventDeviceAddedClass.png" alt="virDomainEventDeviceAddedClass"></p><p>event-&gt;dispatch 一般都是 virDomainEventDispatchDefaultFunc 根据 event_id 分发，执行对应的函数<br><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/virObjectEvent_dispatch.png" alt="event-&gt;dispatch"></p><p>VIR_DOMAIN_EVENT_ID_DEVICE_ADDED  &lt;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;  virConnectDomainEventDeviceAddedCallback</p>]]></content>
-    
-    
-    <categories>
-      
-      <category>libvirt</category>
-      
-    </categories>
-    
-    
-    <tags>
-      
-      <tag>libvirt</tag>
-      
-      <tag>event</tag>
-      
-    </tags>
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>Memory Hotplug</title>
     <link href="/2024/02/27/memory_hotplug/"/>
     <url>/2024/02/27/memory_hotplug/</url>
@@ -81,6 +54,33 @@
       <tag>hotplug</tag>
       
       <tag>memory</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>libvirt event</title>
+    <link href="/2024/02/27/libvirt_event/"/>
+    <url>/2024/02/27/libvirt_event/</url>
+    
+    <content type="html"><![CDATA[<h1 id="Event-事件机制"><a href="#Event-事件机制" class="headerlink" title="Event 事件机制"></a>Event 事件机制</h1><h2 id="事件注册"><a href="#事件注册" class="headerlink" title="事件注册"></a>事件注册</h2><h3 id="virEventRegisterDefaultImpl"><a href="#virEventRegisterDefaultImpl" class="headerlink" title="virEventRegisterDefaultImpl"></a>virEventRegisterDefaultImpl</h3><ol><li>基于 poll 的事件注册</li><li>必须使用 virEventRunDefaultImpl 来处理事件</li></ol><h3 id="注册Event的方法-virevent-c"><a href="#注册Event的方法-virevent-c" class="headerlink" title="注册Event的方法 virevent.c"></a>注册Event的方法 virevent.c</h3><p>virEventGLibRegisterOnce<br>    |<br>    |<br>    v<br>virEventRegisterImpl：注册了 HandleAdd、HandleUpdate、HandleRemove、TimeoutAdd、TimeoutUpdate、TimeoutRemove</p><ul><li>fd相关的handler<ul><li>virEventAddHandle</li><li>virEventUpdateHandle</li><li>virEventRemoveHandle</li></ul></li><li>virConnectDomainEventRegisterAny() 类似的接口需要注册以下3个Timeout函数<ul><li>virEventAddTimeout</li><li>virEventUpdateTimeout</li><li>virEventRemoveTimeout</li></ul></li></ul><p><strong>vireventglib.c</strong> 定义glic实现的event操作函数</p><h3 id="调用方法函数"><a href="#调用方法函数" class="headerlink" title="调用方法函数"></a>调用方法函数</h3><ol><li>virConnectDomainEventRegisterAny: 增加回调函数用于处理事件<ul><li>需要使用 VIR_DOMAIN_EVENT_CALLBACK() 宏强制转换提供的函数指针，以匹配此方法的签名</li><li>virDomainPtr 只在回调函数执行期间有效，要保留对象，就需要 virDomainRef() 获取对域对象的引用</li></ul></li><li>virConnectDomainEventDeregisterAny: 移除事件回调</li><li>virConnectDomainEventRegister: 添加回调接受虚机生命周期通知</li><li>virConnectDomainEventDeregister: 删除回调函数</li><li>virDomainEventID: 事件id</li><li>virDomainEventType: 事件类型</li></ol><h2 id="事件处理"><a href="#事件处理" class="headerlink" title="事件处理"></a>事件处理</h2><h3 id="注册事件处理函数"><a href="#注册事件处理函数" class="headerlink" title="注册事件处理函数"></a>注册事件处理函数</h3><p>domainEventCallbacks[]</p><p>qemuProcessEventHandler ：添加线程池工作函数</p><h3 id="分发-event，定时处理"><a href="#分发-event，定时处理" class="headerlink" title="分发 event，定时处理"></a>分发 event，定时处理</h3><p>|– virEventAddTimeout(virObjectEventTimer, …)<br>    |– virObjectEventStateFlush<br>        |– virObjectEventStateQueueDispatch(state, tempQueue, state-&gt;callbacks)<br>            |– virObjectEventStateDispatchCallbacks                           &lt;—- 找合适的callback，处理event<br>                |– virObjectEventDispatchMatchCallback<br>                |– event-&gt;dispatch(cb-&gt;conn, event, cb-&gt;cb, cb-&gt;opaque);      &lt;—- callback处理事件<br>        |– virObjectEventCallbackListPurgeMarked(state-&gt;callbacks);<br>        |– virObjectEventStateCleanupTimer</p><h2 id="创建-DeviceAdded-Event-Class"><a href="#创建-DeviceAdded-Event-Class" class="headerlink" title="创建 DeviceAdded Event Class"></a>创建 DeviceAdded Event Class</h2><p>VIR_CLASS_NEW(virDomainEventDeviceAdded, virDomainEventClass)<br><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/virDomainEventDeviceAddedClass.png" alt="virDomainEventDeviceAddedClass"></p><p>event-&gt;dispatch 一般都是 virDomainEventDispatchDefaultFunc 根据 event_id 分发，执行对应的函数<br><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/virObjectEvent_dispatch.png" alt="event-&gt;dispatch"></p><p>VIR_DOMAIN_EVENT_ID_DEVICE_ADDED  &lt;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;  virConnectDomainEventDeviceAddedCallback</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>libvirt</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>libvirt</tag>
+      
+      <tag>event</tag>
       
     </tags>
     
