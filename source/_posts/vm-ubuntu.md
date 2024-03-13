@@ -1,7 +1,9 @@
 ---
 title: vms over ubuntu
 date: 2023-12-20 02:31:41
-tags: libvirt
+categories: ubuntu
+tags:
+    - ubuntu
 ---
 
 1. ubuntu需要修改emulator

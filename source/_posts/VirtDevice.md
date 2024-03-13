@@ -2,6 +2,8 @@
 title: Virt Device
 date: 2023-12-10 09:26:43
 categories: VirtMachine
+tags:
+    - protocol
 ---
 
 # 模型演变

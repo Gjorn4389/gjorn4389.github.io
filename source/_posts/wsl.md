@@ -1,7 +1,9 @@
 ---
 title: WSL
 date: 2023-12-17 13:33:26
+categories: windows
 tags:
+    - wsl
 ---
 
 # 常用命令
@@ -15,10 +17,10 @@ tags:
 2. 执行命令：ubuntu1804.exe config --default-user root
     > 需要在cmd中执行，cd到指定目录
 3. 如果遇到`NAT 模式下的 WSL 不支持 localhost 代理`
-    + 修改 `C:/User/用户名/.wslconfig` 
+    + 修改 `C:/User/用户名/.wslconfig`
         ```
         [experimental]
-        autoMemoryReclaim=gradual  
+        autoMemoryReclaim=gradual
         networkingMode=mirrored
         dnsTunneling=true
         firewall=true

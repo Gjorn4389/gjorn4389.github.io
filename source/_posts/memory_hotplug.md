@@ -1,7 +1,11 @@
 ---
 title: Memory Hotplug
 date: 2024-2-27 13:33:26
-tags: libvirt hotplug memory
+categories: libvirt
+tags:
+    - libvirt
+    - hotplug
+    - memory
 ---
 
 # 热插内存主要流程

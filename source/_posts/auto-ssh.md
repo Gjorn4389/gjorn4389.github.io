@@ -1,7 +1,10 @@
 ---
 title: auto-ssh
 date: 2023-12-22 00:52:05
-tags: shell expect
+categories: linux
+tags:
+    - shell
+    - expect
 ---
 
 # 使用expect工具实现自动注入账号密码

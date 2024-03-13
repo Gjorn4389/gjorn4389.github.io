@@ -1,7 +1,11 @@
 ---
 title: VCPU Hotplug
 date: 2024-3-13 13:33:26
-tags: libvirt hotplug vcpu
+categories: libvirt
+tags:
+    - libvirt
+    - hotplug
+    - vcpu
 ---
 
 # 热插vcpu主要流程

@@ -1,7 +1,10 @@
 ---
 title: snipaste picgo ubuntu
 date: 2023-12-22 00:52:05
-tags: ubuntu picgo
+categories: ubuntu
+tags:
+    - ubuntu
+    - picgo
 ---
 
 # flameshot ubuntu 截图工具
@@ -10,7 +13,7 @@ tags: ubuntu picgo
 
 # Picgo
 1. [PicGo客户端](https://github.com/Molunerfinn/PicGo)
-2. 下载 AppImage 格式 
+2. 下载 AppImage 格式
 3. 添加到 Applications
     + `vim /usr/share/applications/picgo.desktop`
     ```

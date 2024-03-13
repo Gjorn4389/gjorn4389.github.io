@@ -1,7 +1,9 @@
 ---
 title: CSS Basic
 date: 2023-12-10 12:14:02
-categories: WebDev
+categories: Web
+tags:
+  - Web
 ---
 
 # CSS
@@ -421,7 +423,7 @@ CSS将所有元素都设置为一个矩形的盒子，通过改变盒子的位�
      + 三个值：左上 右上/左下 右下
      + 两个值：左上/右下 右上/左下
      + 一个值：四个角
-     + `x / y`：表示为椭圆 
+     + `x / y`：表示为椭圆
    + 圆形：`border-radius: 50%;`
 
 # 3 浮动
@@ -611,7 +613,7 @@ BFC（Block Formatting Context）块级格式化环境
 
 ## 5.3 图标字体
 > [Font Awesome](https://fontawesome.com/)
-> 
+>
 > [阿里巴巴矢量图标库](https://www.iconfont.cn/)
 
 `Font Awesome`
@@ -648,7 +650,7 @@ BFC（Block Formatting Context）块级格式化环境
             font-family: 'iconfont';
             src: url('./iconFont/iconfont.ttf') format('truetype');
         }
-    
+
         .iconfont {
             font-family: "iconfont" !important;
             font-size: 16px;
@@ -665,7 +667,7 @@ BFC（Block Formatting Context）块级格式化环境
 3. 挑选图标并获取字体编码，也可以是类名
     ```html
     <i class="iconfont">&#xe664;</i>
-    
+
     <i class="iconfont icon-add-circle"></i>
     ```
 
@@ -821,7 +823,7 @@ BFC（Block Formatting Context）块级格式化环境
 ## 7.2 tr
 利用伪类实现不同行的背景颜色
 > 如果表格中没有使用`tbody`而是直接使用`tr`，那么浏览器会自动创建一个`tbody`，并将全部`tr`放入`tbody`
-> 
+>
 > **`tr`并不是`table`的子元素**
 ```css
 tbody > tr:nth-child(even) {
@@ -861,7 +863,7 @@ tbody > tr:nth-child(odd) {
     + `n`：分`n`步完成
     + `direction`：决定函数是左连续还是右连续
   > [Easing Function](https://developer.mozilla.org/zh-CN/docs/Web/CSS/easing-function)
-+ `transition-delay`：过渡效果的延迟 
++ `transition-delay`：过渡效果的延迟
 
 ## 8.2 动画
 动画可以自动触发动态效果。设置动画效果，必须要设置一个关键帧，关键帧设置了动画执行的每一个步骤。
@@ -1108,7 +1110,7 @@ Less 提供了使用嵌套（nesting）代替层叠或与层叠结合使用的�
 ## 9.6 函数（Functions）
 Less 内置了多种函数用于转换颜色、处理字符串、算术运算等。
 
-利用 percentage 函数将 0.5 转换为 50%，将颜色饱和度增加 5%，以及颜色亮度降低 25% 并且色相值增加 8 
+利用 percentage 函数将 0.5 转换为 50%，将颜色饱和度增加 5%，以及颜色亮度降低 25% 并且色相值增加 8
 ```less
 @base: #f04615;
 @width: 0.5;

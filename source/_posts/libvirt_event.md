@@ -1,7 +1,10 @@
 ---
 title: libvirt event
 date: 2024-2-27 13:33:26
-tags: libvirt event
+categories: libvirt
+tags:
+    - libvirt
+    - event
 ---
 
 # Event 事件机制
