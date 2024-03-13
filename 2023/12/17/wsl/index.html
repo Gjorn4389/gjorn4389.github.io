@@ -24,8 +24,9 @@
 <meta property="og:description" content="常用命令 wsl --list wsl --unregister &lt;Dist&gt; wsl --help wsl --version  修改默认用户为 root 找到对应的发行版exe文件：C:\Users\用户名\AppData\Local\Microsoft\WindowsApps\ubuntu1804.exe 执行命令：ubuntu1804.exe config –default-u">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-12-17T05:33:26.000Z">
-<meta property="article:modified_time" content="2023-12-22T15:42:30.227Z">
+<meta property="article:modified_time" content="2024-03-13T16:34:28.193Z">
 <meta property="article:author" content="Gjorn">
+<meta property="article:tag" content="wsl">
 <meta name="twitter:card" content="summary_large_image">
   
   
@@ -285,7 +286,7 @@
 </blockquote>
 </li>
 <li>如果遇到<code>NAT 模式下的 WSL 不支持 localhost 代理</code><ul>
-<li>修改 <code>C:/User/用户名/.wslconfig</code>   <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[experimental]</span><br><span class="hljs-attr">autoMemoryReclaim</span>=gradual  <br><span class="hljs-attr">networkingMode</span>=mirrored<br><span class="hljs-attr">dnsTunneling</span>=<span class="hljs-literal">true</span><br><span class="hljs-attr">firewall</span>=<span class="hljs-literal">true</span><br><span class="hljs-attr">autoProxy</span>=<span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure></li>
+<li>修改 <code>C:/User/用户名/.wslconfig</code>  <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[experimental]</span><br><span class="hljs-attr">autoMemoryReclaim</span>=gradual<br><span class="hljs-attr">networkingMode</span>=mirrored<br><span class="hljs-attr">dnsTunneling</span>=<span class="hljs-literal">true</span><br><span class="hljs-attr">firewall</span>=<span class="hljs-literal">true</span><br><span class="hljs-attr">autoProxy</span>=<span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure></li>
 <li>重启wsl：<code>wsl --shutdown</code></li>
 </ul>
 </li>
@@ -303,6 +304,34 @@
             <div>
               <div class="post-metas my-3">
   
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/windows/" class="category-chain-item">windows</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/wsl/" class="print-no-link">#wsl</a>
+      
+    </div>
   
 </div>
 

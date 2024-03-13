@@ -23,13 +23,13 @@
 <meta property="og:site_name" content="HandBook">
 <meta property="og:description" content="热插内存主要流程|– qemuDomainAttachDeviceLiveAndConfig|– qemuDomainAttachDeviceLive|– qemuDomainAttachMemory    |– virDomainMemoryInsert    |– event &#x3D; virDomainEventDeviceAddedNewFromObj(vm, objalias);">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/virDomainEventDeviceAddedClass.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/virObjectEvent_dispatch.png">
 <meta property="article:published_time" content="2024-02-27T05:33:26.000Z">
-<meta property="article:modified_time" content="2024-03-07T16:57:55.626Z">
+<meta property="article:modified_time" content="2024-03-13T16:32:55.956Z">
 <meta property="article:author" content="Gjorn">
+<meta property="article:tag" content="libvirt">
+<meta property="article:tag" content="hotplug">
+<meta property="article:tag" content="memory">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/virDomainEventDeviceAddedClass.png">
   
   
   
@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          176 字
+          59 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          2 分钟
+          1 分钟
         
       </span>
     
@@ -275,32 +275,13 @@
             
               <div class="markdown-body">
                 
-                <h1 id="热插内存主要流程"><a href="#热插内存主要流程" class="headerlink" title="热插内存主要流程"></a>热插内存主要流程</h1><p>|– qemuDomainAttachDeviceLiveAndConfig<br>|– qemuDomainAttachDeviceLive<br>|– qemuDomainAttachMemory<br>    |– virDomainMemoryInsert<br>    |– event &#x3D; virDomainEventDeviceAddedNewFromObj(vm, objalias);      构造event<br>        |– virDomainEventDeviceAddedClass, VIR_DOMAIN_EVENT_ID_DEVICE_ADDED<br>    |– virObjectEventStateQueue(<strong>driver-&gt;domainEventState</strong>, event);      等待分发<br>        |– virObjectEventStateQueueRemote</p>
-<h1 id="分发-event"><a href="#分发-event" class="headerlink" title="分发 event"></a>分发 event</h1><p>|– virObjectEventStateFlush<br>    |– virObjectEventStateQueueDispatch<br>        |– virObjectEventStateDispatchCallbacks<br>    |– virObjectEventCallbackListPurgeMarked(state-&gt;callbacks);<br>        |– event-&gt;dispatch(cb-&gt;conn, event, cb-&gt;cb, cb-&gt;opaque);</p>
-<h2 id="创建-DeviceAdded-Event-Class"><a href="#创建-DeviceAdded-Event-Class" class="headerlink" title="创建 DeviceAdded Event Class"></a>创建 DeviceAdded Event Class</h2><p>VIR_CLASS_NEW(virDomainEventDeviceAdded, virDomainEventClass)<br><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/virDomainEventDeviceAddedClass.png" srcset="/img/loading.gif" lazyload alt="virDomainEventDeviceAddedClass"></p>
-<p>event-&gt;dispatch 一般都是 virDomainEventDispatchDefaultFunc 根据 event_id 分发，执行对应的函数<br><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/virObjectEvent_dispatch.png" srcset="/img/loading.gif" lazyload alt="event-&gt;dispatch"></p>
-<p>VIR_DOMAIN_EVENT_ID_DEVICE_ADDED  &lt;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;  virConnectDomainEventDeviceAddedCallback</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Jacobsea/article/details/125616913">理解 event 监听</a></p>
-<h3 id="virEventRegisterDefaultImpl"><a href="#virEventRegisterDefaultImpl" class="headerlink" title="virEventRegisterDefaultImpl"></a>virEventRegisterDefaultImpl</h3><ol>
-<li>基于 poll 的事件注册</li>
-<li>必须使用 virEventRunDefaultImpl 来处理事件</li>
-</ol>
-<h3 id="注册Event的方法-virevent-c"><a href="#注册Event的方法-virevent-c" class="headerlink" title="注册Event的方法 virevent.c"></a>注册Event的方法 virevent.c</h3><p>virEventGLibRegisterOnce<br>    |<br>    |<br>    v<br>virEventRegisterImpl：注册了 HandleAdd、HandleUpdate、HandleRemove、TimeoutAdd、TimeoutUpdate、TimeoutRemove</p>
-<p>virEventAddHandle<br>virEventUpdateHandle<br>virEventRemoveHandle<br>virEventAddTimeout<br>virEventUpdateTimeout<br>virEventRemoveTimeout</p>
-<p><strong>vireventglib.c</strong> 定义glic实现的event操作函数</p>
-<h3 id="qemu-driver-实现"><a href="#qemu-driver-实现" class="headerlink" title="qemu driver 实现"></a>qemu driver 实现</h3><p>qemuConnectDomainEventRegisterAny<br>|– virDomainEventStateRegisterID<br>    |– virDomainEventStateRegisterID</p>
-<h3 id="调用方法函数"><a href="#调用方法函数" class="headerlink" title="调用方法函数"></a>调用方法函数</h3><ol>
-<li>virConnectDomainEventRegisterAny: 增加回调函数用于处理事件<ul>
-<li>需要使用 VIR_DOMAIN_EVENT_CALLBACK() 宏强制转换提供的函数指针，以匹配此方法的签名</li>
-<li>virDomainPtr 只在回调函数执行期间有效，要保留对象，就需要 virDomainRef() 获取对域对象的引用</li>
-</ul>
-</li>
-<li>virConnectDomainEventDeregisterAny: 移除事件回调</li>
-<li>virConnectDomainEventRegister: 添加回调接受虚机生命周期通知</li>
-<li>virConnectDomainEventDeregister: 删除回调函数</li>
-<li>virDomainEventID: 事件id</li>
-<li>virDomainEventType: 事件类型</li>
-</ol>
+                <h1 id="热插内存主要流程"><a href="#热插内存主要流程" class="headerlink" title="热插内存主要流程"></a>热插内存主要流程</h1><p>|– qemuDomainAttachDeviceLiveAndConfig<br>|– qemuDomainAttachDeviceLive<br>|– qemuDomainAttachMemory<br>    |– virDomainMemoryInsert<br>    |– event &#x3D; virDomainEventDeviceAddedNewFromObj(vm, objalias);      构造event<br>        |– virDomainEventDeviceAddedClass, <strong>VIR_DOMAIN_EVENT_ID_DEVICE_ADDED</strong><br>    |– virObjectEventStateQueue(<strong>driver-&gt;domainEventState</strong>, event);      等待分发<br>        |– virObjectEventStateQueueRemote<br>            |– virObjectEventQueuePush</p>
+<h3 id="qemu-driver-实现"><a href="#qemu-driver-实现" class="headerlink" title="qemu driver 实现"></a>qemu driver 实现</h3><p>virConnectDomainEventRegisterAny<br>|– qemuConnectDomainEventRegisterAny<br>    |– virDomainEventStateRegisterID(conn, driver-&gt;domainEventState, …)<br>        |– virObjectEventStateRegisterID<br>            |– virEventAddTimeout<br>            |– virObjectEventCallbackListAddID</p>
+<p>qemuConnectDomainQemuMonitorEventRegister<br>|– virConnectDomainQemuMonitorEventRegisterEnsureACL<br>|– virConnectDomainQemuMonitorEventRegister</p>
+<h2 id="调用callback的流程"><a href="#调用callback的流程" class="headerlink" title="调用callback的流程"></a>调用callback的流程</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c">&#123;<br>    REMOTE_PROC_DOMAIN_EVENT_CALLBACK_DEVICE_ADDED,<br>    remoteDomainBuildEventCallbackDeviceAdded,<br>    <span class="hljs-keyword">sizeof</span>(remote_domain_event_callback_device_added_msg),<br>    (<span class="hljs-type">xdrproc_t</span>)xdr_remote_domain_event_callback_device_added_msg<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>remoteDomainBuildEventCallbackDeviceAdded<br>virDomainEventDeviceAddedNewFromDom<br>virDomainEventDeviceAddedNew<br>virDomainEventNew<br>virObjectEventNew(klass, virDomainEventDispatchDefaultFunc, …)  &lt;— 这里注册了一个分发函数，找到对应的处理函数</p>
+<h2 id="调用分发函数"><a href="#调用分发函数" class="headerlink" title="调用分发函数"></a>调用分发函数</h2><p>virObjectEventStateDispatchCallbacks<br>|– 在callback池中找匹配的event_id，确定event对应的callback<br>|– event-&gt;dispatch(cb-&gt;conn, event, cb-&gt;cb, cb-&gt;opaque);</p>
 
                 
               </div>
@@ -309,6 +290,38 @@
             <div>
               <div class="post-metas my-3">
   
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/libvirt/" class="category-chain-item">libvirt</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/libvirt/" class="print-no-link">#libvirt</a>
+      
+        <a href="/tags/hotplug/" class="print-no-link">#hotplug</a>
+      
+        <a href="/tags/memory/" class="print-no-link">#memory</a>
+      
+    </div>
   
 </div>
 
@@ -362,6 +375,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2024/02/27/libvirt_event/" title="libvirt event">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">libvirt event</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
