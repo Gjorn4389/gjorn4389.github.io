@@ -17,11 +17,8 @@ tags:
 
 ### 注册Event的方法 virevent.c
 
-virEventGLibRegisterOnce
-    |
-    |
-    v
-virEventRegisterImpl：注册了 HandleAdd、HandleUpdate、HandleRemove、TimeoutAdd、TimeoutUpdate、TimeoutRemove
+|-- virEventGLibRegisterOnce
+|-- virEventRegisterImpl: 注册了 HandleAdd、HandleUpdate、HandleRemove、TimeoutAdd、TimeoutUpdate、TimeoutRemove
 
 + fd相关的handler
     + virEventAddHandle

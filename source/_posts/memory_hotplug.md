@@ -9,6 +9,18 @@ tags:
 ---
 
 # 热插内存主要流程
+
+## 注册 callback
+virConnectDomainEventRegisterAny
+|-- qemuConnectDomainEventRegisterAny
+    |-- virDomainEventStateRegisterID(conn, driver->domainEventState, ...)
+        |-- virObjectEventStateRegisterID
+            |-- virEventAddTimeout(-1, **virObjectEventTimer**, state)
+            |-- virObjectEventCallbackListAddID                 <--- 在conn中添加callback
+
+
+
+## 添加事件
 |-- qemuDomainAttachDeviceLiveAndConfig
 |-- qemuDomainAttachDeviceLive
 |-- qemuDomainAttachMemory
@@ -20,20 +32,16 @@ tags:
             |-- virObjectEventQueuePush
 
 
-### qemu driver 实现
-virConnectDomainEventRegisterAny
-|-- qemuConnectDomainEventRegisterAny
-    |-- virDomainEventStateRegisterID(conn, driver->domainEventState, ...)
-        |-- virObjectEventStateRegisterID
-            |-- virEventAddTimeout
-            |-- virObjectEventCallbackListAddID
-
-
-
-qemuConnectDomainQemuMonitorEventRegister
-|-- virConnectDomainQemuMonitorEventRegisterEnsureACL
-|-- virConnectDomainQemuMonitorEventRegister
-
+## 分发事件
+|-- virObjectEventTimer
+|-- virObjectEventStateFlush   <--- Timer 到期之后会将调用该函数
+    |-- virEventUpdateTimeout
+    |-- virObjectEventStateQueueDispatch
+        |-- virObjectEventStateDispatchCallbacks
+            |-- 在callback池中找匹配的event_id，确定event对应的callback
+            |-- event->dispatch(cb->conn, event, cb->cb, cb->opaque);
+    |-- virObjectEventCallbackListPurgeMarked
+    |-- virObjectEventStateCleanupTimer
 
 
 ## 调用callback的流程
@@ -47,14 +55,13 @@ qemuConnectDomainQemuMonitorEventRegister
 }
 ```
 
-remoteDomainBuildEventCallbackDeviceAdded
-virDomainEventDeviceAddedNewFromDom
-virDomainEventDeviceAddedNew
-virDomainEventNew
-virObjectEventNew(klass, virDomainEventDispatchDefaultFunc, ...)  <--- 这里注册了一个分发函数，找到对应的处理函数
+## 事件的callback注册
+static virNetClientProgramEvent remoteEvents[]
 
+|-- remoteDomainBuildEventCallbackDeviceAdded
+    |-- virDomainEventDeviceAddedNewFromDom
+        |-- virDomainEventDeviceAddedNew
+        |-- virDomainEventNew
+        |-- virObjectEventNew(klass, **virDomainEventDispatchDefaultFunc**, ...)  <--- 这里注册了一个分发函数，找到对应的处理函数
+    |-- virObjectEventStateQueueRemote
 
-## 调用分发函数
-virObjectEventStateDispatchCallbacks
-|-- 在callback池中找匹配的event_id，确定event对应的callback
-|-- event->dispatch(cb->conn, event, cb->cb, cb->opaque);
