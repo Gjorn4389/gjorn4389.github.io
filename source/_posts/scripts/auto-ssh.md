@@ -1,7 +1,7 @@
 ---
 title: auto-ssh
 date: 2023-12-22 00:52:05
-categories: linux
+categories: scripts
 tags:
     - shell
     - expect
