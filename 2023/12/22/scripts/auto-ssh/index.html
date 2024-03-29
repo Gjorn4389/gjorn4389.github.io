@@ -16,26 +16,23 @@
   <meta name="author" content="Gjorn">
   <meta name="keywords" content="">
   
-    <meta name="description" content="模型演变 完全虚拟化: 根据硬件设备规范模拟，对Guest透明，不需要修改 Vhost方案: 将数据面迁移到内核空间 Virtio协议: 半虚拟化，使用Virtqueue传输数据 VT-d: Intel 在硬件层面提供支持，包含DMA重映射、中断重映射等安全方案 SR-IOV(Single Root I&#x2F;O Virtualization): 将一个PCIe设备虚拟成多个功能设备给不同虚机">
+    <meta name="description" content="使用expect工具实现自动注入账号密码123456789101112131415161718192021222324252627#!&#x2F;bin&#x2F;bashif [ $# -ne 2 ]; then    echo &quot;usage: sh copykey.sh hostip password &quot;    exit 1fi# 判断id_rsa秘钥文件是否存在if [ ! -f &amp;quot">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Virt Device">
-<meta property="og:url" content="https://gjorn4389.github.io/2023/12/10/VirtDevice/index.html">
+<meta property="og:title" content="auto-ssh">
+<meta property="og:url" content="https://gjorn4389.github.io/2023/12/22/scripts/auto-ssh/index.html">
 <meta property="og:site_name" content="HandBook">
-<meta property="og:description" content="模型演变 完全虚拟化: 根据硬件设备规范模拟，对Guest透明，不需要修改 Vhost方案: 将数据面迁移到内核空间 Virtio协议: 半虚拟化，使用Virtqueue传输数据 VT-d: Intel 在硬件层面提供支持，包含DMA重映射、中断重映射等安全方案 SR-IOV(Single Root I&#x2F;O Virtualization): 将一个PCIe设备虚拟成多个功能设备给不同虚机">
+<meta property="og:description" content="使用expect工具实现自动注入账号密码123456789101112131415161718192021222324252627#!&#x2F;bin&#x2F;bashif [ $# -ne 2 ]; then    echo &quot;usage: sh copykey.sh hostip password &quot;    exit 1fi# 判断id_rsa秘钥文件是否存在if [ ! -f &amp;quot">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/vfio/cpu_pci_topology.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/kvmtool_pci_bar.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/kvmtool_dma_map.png">
-<meta property="article:published_time" content="2023-12-10T01:26:43.000Z">
-<meta property="article:modified_time" content="2024-03-13T16:33:33.798Z">
+<meta property="article:published_time" content="2023-12-21T16:52:05.000Z">
+<meta property="article:modified_time" content="2024-03-27T13:07:06.533Z">
 <meta property="article:author" content="Gjorn">
-<meta property="article:tag" content="protocol">
+<meta property="article:tag" content="shell">
+<meta property="article:tag" content="expect">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/vfio/cpu_pci_topology.png">
   
   
   
-  <title>Virt Device - HandBook</title>
+  <title>auto-ssh - HandBook</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -201,7 +198,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Virt Device"></span>
+            <span id="subtitle" data-typed-text="auto-ssh"></span>
           
         </div>
 
@@ -212,8 +209,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-12-10 09:26" pubdate>
-          2023年12月10日 上午
+        <time datetime="2023-12-22 00:52" pubdate>
+          2023年12月22日 凌晨
         </time>
       </span>
     
@@ -224,7 +221,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          668 字
+          28 字
         
       </span>
     
@@ -235,7 +232,7 @@
         
         
         
-          6 分钟
+          1 分钟
         
       </span>
     
@@ -272,75 +269,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Virt Device</h1>
+            <h1 id="seo-header">auto-ssh</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="模型演变"><a href="#模型演变" class="headerlink" title="模型演变"></a>模型演变</h1><ul>
-<li>完全虚拟化: 根据硬件设备规范模拟，对Guest透明，不需要修改</li>
-<li><code>Vhost</code>方案: 将数据面迁移到内核空间</li>
-<li><code>Virtio</code>协议: 半虚拟化，使用<code>Virtqueue</code>传输数据</li>
-<li><code>VT-d</code>: Intel 在硬件层面提供支持，包含DMA重映射、中断重映射等安全方案</li>
-<li><code>SR-IOV</code>(Single Root I&#x2F;O Virtualization): 将一个PCIe设备虚拟成多个功能设备给不同虚机访问使用</li>
-</ul>
-<h1 id="PCI配置空间"><a href="#PCI配置空间" class="headerlink" title="PCI配置空间"></a>PCI配置空间</h1><h2 id="PCI配置空间-1"><a href="#PCI配置空间-1" class="headerlink" title="PCI配置空间"></a>PCI配置空间</h2><p>TODO</p>
-<h2 id="PCI设备板上存储空间"><a href="#PCI设备板上存储空间" class="headerlink" title="PCI设备板上存储空间"></a>PCI设备板上存储空间</h2><ol>
-<li>PCI设备提出需要的地址空间大小、板上内存映射类型(内存地址、IO地址)，将其记录在 BAR(Base Address Registers) 中。</li>
-<li>由 BIOS(或UEFI) 在系统初始化，访问 <code>BAR</code> 统一划分地址空间<blockquote>
-<p>Q: 热插设备什么时候分配地址空间</p>
-</blockquote>
-</li>
-<li>PCI拓扑关系： cpu &lt;—&gt; Host Bridge &lt;—&gt; pci bus &lt;—&gt; PCI Device<br> <img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/vfio/cpu_pci_topology.png" srcset="/img/loading.gif" lazyload alt="PCI拓扑关系"></li>
-<li>确定访问设备：管脚 <code>IDSEL</code> 选定目标 PCI 设备，仅需要确定 <code>Function Number</code> 和 <code>Registers Number</code></li>
-</ol>
-<h2 id="模拟PCI设备配置空间"><a href="#模拟PCI设备配置空间" class="headerlink" title="模拟PCI设备配置空间"></a>模拟PCI设备配置空间</h2><h3 id="确定寄存器地址"><a href="#确定寄存器地址" class="headerlink" title="确定寄存器地址"></a>确定寄存器地址</h3><blockquote>
-<p>kvmtool 实现</p>
-</blockquote>
-<ol>
-<li>计算 pci_config_address_ptr &#x3D; &amp;pci_config_address + addr - PCI_CONFIG_ADDRESS</li>
-<li>通过 pci_config_address_ptr 来修改配置空间</li>
-</ol>
-<h2 id="模拟PCI设备BAR"><a href="#模拟PCI设备BAR" class="headerlink" title="模拟PCI设备BAR"></a>模拟PCI设备BAR</h2><ol>
-<li><code>pci_get_mmio_block</code> 为PCI设备分配内存地址：内存对齐、记录 mmio_blocks 方便后续分配<br> <img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/kvmtool_pci_bar.png" srcset="/img/loading.gif" lazyload alt="kvmtool_pci_bar"></li>
-<li><code>device__register</code> 将设备注册到 rbtree上，根据 dev_num 来排序，方便检索</li>
-</ol>
-<h1 id="设备透传"><a href="#设备透传" class="headerlink" title="设备透传"></a>设备透传</h1><h2 id="SR-IVO-标准"><a href="#SR-IVO-标准" class="headerlink" title="SR-IVO 标准"></a>SR-IVO 标准</h2><blockquote>
-<p>Single Root I&#x2F;O Virtualization and Sharing</p>
-</blockquote>
-<ol>
-<li>设备分为 PF(Physical Function) 和 VF(Virtual Function)，硬件实现，一个SR-IOV可以支持多个VF，每个VF透传给Guest</li>
-<li>每个VF都有独立的用于数据传输的存储空间、队列、中断及命令处理单元，由VMM管理</li>
-<li>虚拟机通过VF驱动直接访问物理设备，也可以通过SR-IOV设备的PF结构共享物理设备</li>
-</ol>
-<h2 id="虚拟配置空间"><a href="#虚拟配置空间" class="headerlink" title="虚拟配置空间"></a>虚拟配置空间</h2><blockquote>
-<p>安全考虑Guest不能直接修改配置空间，VMM作为代理对配置空间进行修改</p>
-</blockquote>
-<ol>
-<li>Host的BIOS会分配PCI设备的BAR空间，Guest不能直接访问，需要VMM负责映射</li>
-<li>VF-BAR —&gt; HPA —&gt; GPA，VMM只需要完成GPA到HVA的映射</li>
-<li>配置空间与数据面隔离，不会影响数据效率</li>
-</ol>
-<h2 id="DMA重映射"><a href="#DMA重映射" class="headerlink" title="DMA重映射"></a>DMA重映射</h2><ol>
-<li>背景：防止 Guest DMA 恶意破坏内存</li>
-<li>原理：<ul>
-<li>为 Guest 建立页表（DMA Table，由多个设备共享），页表限制了设备可以访问的内存</li>
-<li>DMA重映射硬件 根据BDF号确定页表，找到HPA</li>
-<li>DMA重映射硬件 为外设进行IO地址翻译，也叫IOMMU</li>
-</ul>
-</li>
-<li>kvmtool 实现：<ul>
-<li>kvmtool 为 Guest准备多个内存段，提供给外设使用</li>
-<li><code>VFIO_IOMMU_MAP_DMA</code>：在DMA重映射页表中建立映射关系</li>
-<li>内核通知外设进行DMA前，需要把虚拟地址转换为物理地址（通过dma_map的iova、vaddr）</li>
-<li>内核创建 IOMMU 的页表，会将VA转成PA，其中记录的是GPA到HPA的映射<br> <img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/kvmtool_dma_map.png" srcset="/img/loading.gif" lazyload alt="kvmtool中的dma映射"></li>
-</ul>
-</li>
-</ol>
-<h2 id="中断重映射"><a href="#中断重映射" class="headerlink" title="中断重映射"></a>中断重映射</h2><ol>
-<li>背景：避免虚机向其他虚机发送恶意中断</li>
-<li>原理：硬件中断重映射单元 对中断进行有效性验证，以中断号为索引查询中断重映射表，代替外设转发中断信号，目的虚机由BDF确定</li>
-</ol>
+                <h1 id="使用expect工具实现自动注入账号密码"><a href="#使用expect工具实现自动注入账号密码" class="headerlink" title="使用expect工具实现自动注入账号密码"></a>使用expect工具实现自动注入账号密码</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br><br>if [ $# -ne 2 ]; then<br>    echo &quot;usage: sh copykey.sh hostip password &quot;<br>    exit 1<br>fi<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">判断id_rsa秘钥文件是否存在</span><br>if [ ! -f &quot;/root/.ssh/id_rsa&quot; ];then<br>    ssh-keygen -t rsa -P &quot;&quot; -f /root/.ssh/id_rsa<br>else<br>    echo &quot;id_rsa has created ......&quot;<br>fi<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">密码登录</span><br>user=&quot;root&quot;<br>ip=$1<br>passwd=$2<br>expect &lt;&lt;EOF<br>    set timeout 5<br>    spawn ssh-copy-id $user@$ip<br>    expect &#123;<br>        &quot;yes/no&quot; &#123; send &quot;yes\n&quot;;exp_continue &#125;<br>        &quot;password&quot; &#123; send &quot;$passwd\n&quot; &#125;<br>        &quot;installed&quot; &#123;  &#125; expect eof<br>    &#125;<br>EOF<br></code></pre></td></tr></table></figure>
 
                 
               </div>
@@ -359,7 +293,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/VirtMachine/" class="category-chain-item">VirtMachine</a>
+  <a href="/categories/scripts/" class="category-chain-item">scripts</a>
   
   
 
@@ -374,7 +308,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/protocol/" class="print-no-link">#protocol</a>
+        <a href="/tags/shell/" class="print-no-link">#shell</a>
+      
+        <a href="/tags/expect/" class="print-no-link">#expect</a>
       
     </div>
   
@@ -386,8 +322,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Virt Device</div>
-      <div>https://gjorn4389.github.io/2023/12/10/VirtDevice/</div>
+      <div>auto-ssh</div>
+      <div>https://gjorn4389.github.io/2023/12/22/scripts/auto-ssh/</div>
     </div>
     <div class="license-meta">
       
@@ -399,7 +335,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年12月10日</div>
+          <div>2023年12月22日</div>
         </div>
       
       
@@ -431,15 +367,21 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/12/10/CSS-Basic/" title="CSS Basic">
+                      <a href="/2023/12/23/virtio/Virtio/" title="Virtio">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">CSS Basic</span>
+                        <span class="hidden-mobile">Virtio</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2023/12/22/os_ops/snipaste-picgo-ubuntu/" title="snipaste picgo ubuntu">
+                        <span class="hidden-mobile">snipaste picgo ubuntu</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>

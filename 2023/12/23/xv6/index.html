@@ -16,22 +16,27 @@
   <meta name="author" content="Gjorn">
   <meta name="keywords" content="">
   
-    <meta name="description" content="ubuntu需要修改emulator1&lt;emulator&gt;&#x2F;usr&#x2F;bin&#x2F;qemu-system-x86_64&lt;&#x2F;emulator&gt; 需要cdrom引导安装系统1234567891011&lt;os&gt;    &lt;bootmenu enable&#x3D;&#x27;yes&#x27; timeout&#x3D;&#x27;5000&#x27;&#x2F;&gt;&lt;&#x2F;os&gt;&amp;lt">
+    <meta name="description" content="环境配置gdb  xv6启动第一个进程 entry.S 从 _entry 开始运行xv6，此时虚拟地址直接映射到物理地址 kernel.ld 将 xv6内核加载到 0x80000000，0x0~0x80000000 包含IO设备 设置栈(用于运行c代码)，stack0在start.c文件中声明 执行 start.c 中的 start()   start.c 修改运行模式为 Machine 模式">
 <meta property="og:type" content="article">
-<meta property="og:title" content="vms over ubuntu">
-<meta property="og:url" content="https://gjorn4389.github.io/2023/12/20/vm-ubuntu/index.html">
+<meta property="og:title" content="xv6">
+<meta property="og:url" content="https://gjorn4389.github.io/2023/12/23/xv6/index.html">
 <meta property="og:site_name" content="HandBook">
-<meta property="og:description" content="ubuntu需要修改emulator1&lt;emulator&gt;&#x2F;usr&#x2F;bin&#x2F;qemu-system-x86_64&lt;&#x2F;emulator&gt; 需要cdrom引导安装系统1234567891011&lt;os&gt;    &lt;bootmenu enable&#x3D;&#x27;yes&#x27; timeout&#x3D;&#x27;5000&#x27;&#x2F;&gt;&lt;&#x2F;os&gt;&amp;lt">
+<meta property="og:description" content="环境配置gdb  xv6启动第一个进程 entry.S 从 _entry 开始运行xv6，此时虚拟地址直接映射到物理地址 kernel.ld 将 xv6内核加载到 0x80000000，0x0~0x80000000 包含IO设备 设置栈(用于运行c代码)，stack0在start.c文件中声明 执行 start.c 中的 start()   start.c 修改运行模式为 Machine 模式">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-12-19T18:31:41.000Z">
-<meta property="article:modified_time" content="2024-03-13T16:34:46.473Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/vma2pma.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/riscv_vma_translate.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/va_space_2_pa_space.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/riscv_process_addr_space.png">
+<meta property="article:published_time" content="2023-12-23T01:26:43.000Z">
+<meta property="article:modified_time" content="2024-03-29T17:31:54.611Z">
 <meta property="article:author" content="Gjorn">
-<meta property="article:tag" content="ubuntu">
+<meta property="article:tag" content="os">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/vma2pma.png">
   
   
   
-  <title>vms over ubuntu - HandBook</title>
+  <title>xv6 - HandBook</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -197,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="vms over ubuntu"></span>
+            <span id="subtitle" data-typed-text="xv6"></span>
           
         </div>
 
@@ -208,8 +213,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-12-20 02:31" pubdate>
-          2023年12月20日 凌晨
+        <time datetime="2023-12-23 09:26" pubdate>
+          2023年12月23日 上午
         </time>
       </span>
     
@@ -220,7 +225,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          12 字
+          666 字
         
       </span>
     
@@ -231,7 +236,7 @@
         
         
         
-          1 分钟
+          6 分钟
         
       </span>
     
@@ -268,14 +273,94 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">vms over ubuntu</h1>
+            <h1 id="seo-header">xv6</h1>
             
             
               <div class="markdown-body">
                 
-                <ol>
-<li>ubuntu需要修改emulator<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">emulator</span>&gt;</span>/usr/bin/qemu-system-x86_64<span class="hljs-tag">&lt;/<span class="hljs-name">emulator</span>&gt;</span><br></code></pre></td></tr></table></figure></li>
-<li>需要cdrom引导安装系统<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">os</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">bootmenu</span> <span class="hljs-attr">enable</span>=<span class="hljs-string">&#x27;yes&#x27;</span> <span class="hljs-attr">timeout</span>=<span class="hljs-string">&#x27;5000&#x27;</span>/&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">os</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">disk</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&#x27;file&#x27;</span> <span class="hljs-attr">device</span>=<span class="hljs-string">&#x27;cdrom&#x27;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">driver</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&#x27;qemu&#x27;</span>/&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">source</span> <span class="hljs-attr">file</span>=<span class="hljs-string">&#x27;/srv/vms/iso/CentOS-7-x86_64-Minimal-2009.iso&#x27;</span>/&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">target</span> <span class="hljs-attr">dev</span>=<span class="hljs-string">&#x27;hdb&#x27;</span> <span class="hljs-attr">bus</span>=<span class="hljs-string">&#x27;ide&#x27;</span>/&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">readonly</span>/&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">boot</span> <span class="hljs-attr">order</span>=<span class="hljs-string">&#x27;2&#x27;</span>/&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">disk</span>&gt;</span><br></code></pre></td></tr></table></figure></li>
+                <blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/638731320">环境配置gdb</a></p>
+</blockquote>
+<h1 id="xv6启动第一个进程"><a href="#xv6启动第一个进程" class="headerlink" title="xv6启动第一个进程"></a>xv6启动第一个进程</h1><ol>
+<li><code>entry.S</code><ul>
+<li>从 <code>_entry</code> 开始运行xv6，此时虚拟地址直接映射到物理地址</li>
+<li><code>kernel.ld</code> 将 xv6内核加载到 <code>0x80000000</code>，<code>0x0~0x80000000</code> 包含IO设备</li>
+<li>设置栈(用于运行c代码)，stack0在<code>start.c</code>文件中声明</li>
+<li>执行 start.c 中的 start()</li>
+</ul>
+</li>
+<li><code>start.c</code><ul>
+<li>修改运行模式为 Machine 模式</li>
+<li>设置main函数的地址</li>
+<li>禁止虚拟地址转换</li>
+<li>将所有的中断和异常委托给管理模式</li>
+<li>内存保护</li>
+<li>产生计时器中断</li>
+<li>通过 <code>mret</code> 回到 Supervisor 模式</li>
+</ul>
+</li>
+<li><code>main.c</code><ul>
+<li>初始化设备、子系统</li>
+<li><code>userinit</code> 执行 <code>initcode.S</code></li>
+<li>scheduler() 会调度到第一次个proc，即init</li>
+</ul>
+</li>
+<li><code>init.c</code><ul>
+<li>创建 console</li>
+<li>打开文件描述符</li>
+<li>启动shell</li>
+</ul>
+</li>
+</ol>
+<h1 id="页表"><a href="#页表" class="headerlink" title="页表"></a>页表</h1><p><strong>术语</strong></p>
+<ul>
+<li>PTE: Page Table Entry</li>
+<li>PPN: Physical Page Nuber</li>
+<li>TLB: Translation Look-aside Buffer</li>
+</ul>
+<p><strong>页表用途</strong></p>
+<ol>
+<li>映射相同的内存到不同的地址空间</li>
+<li>用未映射的页面保护内核和用户栈</li>
+</ol>
+<h2 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h2><blockquote>
+<p>内核将所有物理内存映射到其页表，因此可以直接对物理内存操作</p>
+</blockquote>
+<h3 id="虚拟地址转化步骤"><a href="#虚拟地址转化步骤" class="headerlink" title="虚拟地址转化步骤"></a>虚拟地址转化步骤</h3><ol>
+<li><code>offset</code> 12位：一个页表是4096字节，可以用12位二进制数字表示</li>
+<li><code>index</code> 27位：每个PTE是8字节，一个页表可以储存512个PTE(9位)，index是三级页表(L1、L2、L3各9位)</li>
+<li><code>PPN</code> 44位：Sv39 RISC-V 仅用到44位物理页码<br><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/vma2pma.png" srcset="/img/loading.gif" lazyload alt="虚拟地址转化成物理地址"><br><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/riscv_vma_translate.png" srcset="/img/loading.gif" lazyload alt="RISC-V 地址转化"></li>
+</ol>
+<h3 id="内核使用"><a href="#内核使用" class="headerlink" title="内核使用"></a>内核使用</h3><ol>
+<li><code>satp</code>寄存器: 存放根页表页在内存中的地址</li>
+<li>每个 CPU 有独立的 <code>satp</code>寄存器，因此不同CPU的虚拟地址空间不同，但是使用同一个内核地址空间</li>
+<li>切换进程就需要修改<code>satp</code>寄存器 ?</li>
+</ol>
+<h3 id="常见标记位"><a href="#常见标记位" class="headerlink" title="常见标记位"></a>常见标记位</h3><ul>
+<li><code>PTE_V</code>: PTE是否存在，0表示不合法</li>
+<li><code>PTE_R</code>: 是否可读</li>
+<li><code>PTE_W</code>: 是否可写</li>
+<li><code>PTE_X</code>: 是否可执行</li>
+<li><code>PTE_U</code>: 用户能否访问，0表示仅内核可访问</li>
+</ul>
+<h2 id="内核地址空间"><a href="#内核地址空间" class="headerlink" title="内核地址空间"></a>内核地址空间</h2><p><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/va_space_2_pa_space.png" srcset="/img/loading.gif" lazyload alt="地址空间映射"></p>
+<ol>
+<li>物理地址 <code>0x8000000</code> 以下: 保留了设备接口，作为内存映射控制寄存器暴露给软件，通过这些特殊的物理地址与设备交互</li>
+<li>内核的虚拟地址和物理地址一致，可以通过虚拟地址直接操作物理内存<blockquote>
+<p>内核虚拟地址中非直接映射部分：<br><code>trampoline page</code>: 虚拟地址最后一页<br><code>guard page</code>: 进程的内核栈会有 guard page，防止栈溢出。不会映射到物理地址空间，PTE_V 不设置。</p>
+</blockquote>
+</li>
+<li>内核会给每个进程分配一个内核栈<blockquote>
+<p>内核栈是在系统启动的时候就创建好的吗？对应的内核一直没使用？</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="进程地址空间"><a href="#进程地址空间" class="headerlink" title="进程地址空间"></a>进程地址空间</h2><p><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/riscv_process_addr_space.png" srcset="/img/loading.gif" lazyload alt="进程地址空间"></p>
+<ol>
+<li>不同进程的页表将用户地址转换为物理内存的不同页面，因此进程的内存互相隔离</li>
+<li>进程的虚拟内存空间是连续的，对应的物理内存可以是非连续的</li>
+<li>将虚拟地址的最后一页映射到trampoline page，所有地址空间都有一个单独的物理内存页</li>
+<li>用户栈前一页是 guard page，防止栈溢出</li>
 </ol>
 
                 
@@ -295,7 +380,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/ubuntu/" class="category-chain-item">ubuntu</a>
+  <a href="/categories/os/" class="category-chain-item">os</a>
   
   
 
@@ -310,7 +395,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/ubuntu/" class="print-no-link">#ubuntu</a>
+        <a href="/tags/os/" class="print-no-link">#os</a>
       
     </div>
   
@@ -322,8 +407,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>vms over ubuntu</div>
-      <div>https://gjorn4389.github.io/2023/12/20/vm-ubuntu/</div>
+      <div>xv6</div>
+      <div>https://gjorn4389.github.io/2023/12/23/xv6/</div>
     </div>
     <div class="license-meta">
       
@@ -335,7 +420,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年12月20日</div>
+          <div>2023年12月23日</div>
         </div>
       
       
@@ -367,9 +452,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/12/22/snipaste-picgo-ubuntu/" title="snipaste picgo ubuntu">
+                      <a href="/2024/02/27/libvirt/memory_hotplug/" title="Memory Hotplug">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">snipaste picgo ubuntu</span>
+                        <span class="hidden-mobile">Memory Hotplug</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -377,8 +462,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/12/17/wsl/" title="WSL">
-                        <span class="hidden-mobile">WSL</span>
+                      <a href="/2023/12/23/virtio/Virtio/" title="Virtio">
+                        <span class="hidden-mobile">Virtio</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

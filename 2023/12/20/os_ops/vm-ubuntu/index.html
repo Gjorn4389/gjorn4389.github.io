@@ -16,24 +16,22 @@
   <meta name="author" content="Gjorn">
   <meta name="keywords" content="">
   
-    <meta name="description" content="热插内存主要流程|– qemuDomainAttachDeviceLiveAndConfig|– qemuDomainAttachDeviceLive|– qemuDomainAttachMemory    |– virDomainMemoryInsert    |– event &#x3D; virDomainEventDeviceAddedNewFromObj(vm, objalias);">
+    <meta name="description" content="ubuntu需要修改emulator1&lt;emulator&gt;&#x2F;usr&#x2F;bin&#x2F;qemu-system-x86_64&lt;&#x2F;emulator&gt; 需要cdrom引导安装系统1234567891011&lt;os&gt;    &lt;bootmenu enable&#x3D;&#x27;yes&#x27; timeout&#x3D;&#x27;5000&#x27;&#x2F;&gt;&lt;&#x2F;os&gt;&amp;lt">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Memory Hotplug">
-<meta property="og:url" content="https://gjorn4389.github.io/2024/02/27/memory_hotplug/index.html">
+<meta property="og:title" content="vms over ubuntu">
+<meta property="og:url" content="https://gjorn4389.github.io/2023/12/20/os_ops/vm-ubuntu/index.html">
 <meta property="og:site_name" content="HandBook">
-<meta property="og:description" content="热插内存主要流程|– qemuDomainAttachDeviceLiveAndConfig|– qemuDomainAttachDeviceLive|– qemuDomainAttachMemory    |– virDomainMemoryInsert    |– event &#x3D; virDomainEventDeviceAddedNewFromObj(vm, objalias);">
+<meta property="og:description" content="ubuntu需要修改emulator1&lt;emulator&gt;&#x2F;usr&#x2F;bin&#x2F;qemu-system-x86_64&lt;&#x2F;emulator&gt; 需要cdrom引导安装系统1234567891011&lt;os&gt;    &lt;bootmenu enable&#x3D;&#x27;yes&#x27; timeout&#x3D;&#x27;5000&#x27;&#x2F;&gt;&lt;&#x2F;os&gt;&amp;lt">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-02-27T05:33:26.000Z">
-<meta property="article:modified_time" content="2024-03-13T16:32:55.956Z">
+<meta property="article:published_time" content="2023-12-19T18:31:41.000Z">
+<meta property="article:modified_time" content="2024-03-13T16:34:46.473Z">
 <meta property="article:author" content="Gjorn">
-<meta property="article:tag" content="libvirt">
-<meta property="article:tag" content="hotplug">
-<meta property="article:tag" content="memory">
+<meta property="article:tag" content="ubuntu">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>Memory Hotplug - HandBook</title>
+  <title>vms over ubuntu - HandBook</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -199,7 +197,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Memory Hotplug"></span>
+            <span id="subtitle" data-typed-text="vms over ubuntu"></span>
           
         </div>
 
@@ -210,8 +208,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-02-27 13:33" pubdate>
-          2024年2月27日 下午
+        <time datetime="2023-12-20 02:31" pubdate>
+          2023年12月20日 凌晨
         </time>
       </span>
     
@@ -222,7 +220,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          59 字
+          12 字
         
       </span>
     
@@ -270,18 +268,15 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Memory Hotplug</h1>
+            <h1 id="seo-header">vms over ubuntu</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="热插内存主要流程"><a href="#热插内存主要流程" class="headerlink" title="热插内存主要流程"></a>热插内存主要流程</h1><p>|– qemuDomainAttachDeviceLiveAndConfig<br>|– qemuDomainAttachDeviceLive<br>|– qemuDomainAttachMemory<br>    |– virDomainMemoryInsert<br>    |– event &#x3D; virDomainEventDeviceAddedNewFromObj(vm, objalias);      构造event<br>        |– virDomainEventDeviceAddedClass, <strong>VIR_DOMAIN_EVENT_ID_DEVICE_ADDED</strong><br>    |– virObjectEventStateQueue(<strong>driver-&gt;domainEventState</strong>, event);      等待分发<br>        |– virObjectEventStateQueueRemote<br>            |– virObjectEventQueuePush</p>
-<h3 id="qemu-driver-实现"><a href="#qemu-driver-实现" class="headerlink" title="qemu driver 实现"></a>qemu driver 实现</h3><p>virConnectDomainEventRegisterAny<br>|– qemuConnectDomainEventRegisterAny<br>    |– virDomainEventStateRegisterID(conn, driver-&gt;domainEventState, …)<br>        |– virObjectEventStateRegisterID<br>            |– virEventAddTimeout<br>            |– virObjectEventCallbackListAddID</p>
-<p>qemuConnectDomainQemuMonitorEventRegister<br>|– virConnectDomainQemuMonitorEventRegisterEnsureACL<br>|– virConnectDomainQemuMonitorEventRegister</p>
-<h2 id="调用callback的流程"><a href="#调用callback的流程" class="headerlink" title="调用callback的流程"></a>调用callback的流程</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c">&#123;<br>    REMOTE_PROC_DOMAIN_EVENT_CALLBACK_DEVICE_ADDED,<br>    remoteDomainBuildEventCallbackDeviceAdded,<br>    <span class="hljs-keyword">sizeof</span>(remote_domain_event_callback_device_added_msg),<br>    (<span class="hljs-type">xdrproc_t</span>)xdr_remote_domain_event_callback_device_added_msg<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>remoteDomainBuildEventCallbackDeviceAdded<br>virDomainEventDeviceAddedNewFromDom<br>virDomainEventDeviceAddedNew<br>virDomainEventNew<br>virObjectEventNew(klass, virDomainEventDispatchDefaultFunc, …)  &lt;— 这里注册了一个分发函数，找到对应的处理函数</p>
-<h2 id="调用分发函数"><a href="#调用分发函数" class="headerlink" title="调用分发函数"></a>调用分发函数</h2><p>virObjectEventStateDispatchCallbacks<br>|– 在callback池中找匹配的event_id，确定event对应的callback<br>|– event-&gt;dispatch(cb-&gt;conn, event, cb-&gt;cb, cb-&gt;opaque);</p>
+                <ol>
+<li>ubuntu需要修改emulator<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">emulator</span>&gt;</span>/usr/bin/qemu-system-x86_64<span class="hljs-tag">&lt;/<span class="hljs-name">emulator</span>&gt;</span><br></code></pre></td></tr></table></figure></li>
+<li>需要cdrom引导安装系统<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">os</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">bootmenu</span> <span class="hljs-attr">enable</span>=<span class="hljs-string">&#x27;yes&#x27;</span> <span class="hljs-attr">timeout</span>=<span class="hljs-string">&#x27;5000&#x27;</span>/&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">os</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">disk</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&#x27;file&#x27;</span> <span class="hljs-attr">device</span>=<span class="hljs-string">&#x27;cdrom&#x27;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">driver</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&#x27;qemu&#x27;</span>/&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">source</span> <span class="hljs-attr">file</span>=<span class="hljs-string">&#x27;/srv/vms/iso/CentOS-7-x86_64-Minimal-2009.iso&#x27;</span>/&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">target</span> <span class="hljs-attr">dev</span>=<span class="hljs-string">&#x27;hdb&#x27;</span> <span class="hljs-attr">bus</span>=<span class="hljs-string">&#x27;ide&#x27;</span>/&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">readonly</span>/&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">boot</span> <span class="hljs-attr">order</span>=<span class="hljs-string">&#x27;2&#x27;</span>/&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">disk</span>&gt;</span><br></code></pre></td></tr></table></figure></li>
+</ol>
 
                 
               </div>
@@ -300,7 +295,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/libvirt/" class="category-chain-item">libvirt</a>
+  <a href="/categories/ubuntu/" class="category-chain-item">ubuntu</a>
   
   
 
@@ -315,11 +310,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/libvirt/" class="print-no-link">#libvirt</a>
-      
-        <a href="/tags/hotplug/" class="print-no-link">#hotplug</a>
-      
-        <a href="/tags/memory/" class="print-no-link">#memory</a>
+        <a href="/tags/ubuntu/" class="print-no-link">#ubuntu</a>
       
     </div>
   
@@ -331,8 +322,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Memory Hotplug</div>
-      <div>https://gjorn4389.github.io/2024/02/27/memory_hotplug/</div>
+      <div>vms over ubuntu</div>
+      <div>https://gjorn4389.github.io/2023/12/20/os_ops/vm-ubuntu/</div>
     </div>
     <div class="license-meta">
       
@@ -344,7 +335,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年2月27日</div>
+          <div>2023年12月20日</div>
         </div>
       
       
@@ -376,9 +367,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/03/13/vcpu_hotplug/" title="VCPU Hotplug">
+                      <a href="/2023/12/22/os_ops/snipaste-picgo-ubuntu/" title="snipaste picgo ubuntu">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">VCPU Hotplug</span>
+                        <span class="hidden-mobile">snipaste picgo ubuntu</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -386,8 +377,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/02/27/libvirt_event/" title="libvirt event">
-                        <span class="hidden-mobile">libvirt event</span>
+                      <a href="/2023/12/17/os_ops/wsl/" title="WSL">
+                        <span class="hidden-mobile">WSL</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

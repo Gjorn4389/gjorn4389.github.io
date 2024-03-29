@@ -224,13 +224,13 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/03/13/vcpu_hotplug/" target="_self">
+        <a href="/2024/03/13/libvirt/vcpu_hotplug/" target="_self">
           VCPU Hotplug
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/13/vcpu_hotplug/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/03/13/libvirt/vcpu_hotplug/" target="_self">
         <div>
           热插vcpu主要流程hotpluggable配置缺省值qemuDomainAttachDeviceqemuDomainAttachDeviceFlagsqemuDomainAttachDeviceLiveAndConfigqemuDomainAttachDeviceConfigvirDomainDefPostParsevirDomainDefPostParseCommonvirDomainVcpu
         </div>
@@ -289,15 +289,78 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/02/27/memory_hotplug/" target="_self">
+        <a href="/2024/02/27/libvirt/libvirt_event/" target="_self">
+          libvirt event
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/02/27/libvirt/libvirt_event/" target="_self">
+        <div>
+          Event 事件机制事件注册virEventRegisterDefaultImpl 基于 poll 的事件注册 必须使用 virEventRunDefaultImpl 来处理事件  注册Event的方法 virevent.c|– virEventGLibRegisterOnce|– virEventRegisterImpl: 注册了 HandleAdd、HandleUpdate、HandleRem
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-02-27 13:33" pubdate>
+              2024-02-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/libvirt/" class="category-chain-item">libvirt</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/libvirt/">#libvirt</a>
+            
+              <a href="/tags/event/">#event</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2024/02/27/libvirt/memory_hotplug/" target="_self">
           Memory Hotplug
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/02/27/memory_hotplug/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/02/27/libvirt/memory_hotplug/" target="_self">
         <div>
-          热插内存主要流程|– qemuDomainAttachDeviceLiveAndConfig|– qemuDomainAttachDeviceLive|– qemuDomainAttachMemory    |– virDomainMemoryInsert    |– event &#x3D; virDomainEventDeviceAddedNewFromObj(vm, objalias);
+          热插内存主要流程注册 callbackvirConnectDomainEventRegisterAny|– qemuConnectDomainEventRegisterAny    |– virDomainEventStateRegisterID(conn, driver-&gt;domainEventState, …)        |– virObjectEventStateRegisterI
         </div>
       </a>
 
@@ -354,15 +417,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2024/02/27/libvirt_event/" target="_self">
-          libvirt event
+        <a href="/2023/12/23/xv6/" target="_self">
+          xv6
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/02/27/libvirt_event/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/23/xv6/" target="_self">
         <div>
-          Event 事件机制事件注册virEventRegisterDefaultImpl 基于 poll 的事件注册 必须使用 virEventRunDefaultImpl 来处理事件  注册Event的方法 virevent.cvirEventGLibRegisterOnce    |    |    vvirEventRegisterImpl：注册了 HandleAdd、HandleUpdate、H
+          环境配置gdb  xv6启动第一个进程 entry.S 从 _entry 开始运行xv6，此时虚拟地址直接映射到物理地址 kernel.ld 将 xv6内核加载到 0x80000000，0x0~0x80000000 包含IO设备 设置栈(用于运行c代码)，stack0在start.c文件中声明 执行 start.c 中的 start()   start.c 修改运行模式为 Machine 模式
         </div>
       </a>
 
@@ -370,8 +433,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2024-02-27 13:33" pubdate>
-              2024-02-27
+            <time datetime="2023-12-23 09:26" pubdate>
+              2023-12-23
             </time>
           </div>
         
@@ -386,7 +449,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/libvirt/" class="category-chain-item">libvirt</a>
+  <a href="/categories/os/" class="category-chain-item">os</a>
   
   
 
@@ -401,9 +464,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/libvirt/">#libvirt</a>
-            
-              <a href="/tags/event/">#event</a>
+              <a href="/tags/os/">#os</a>
             
           </div>
         
@@ -417,13 +478,13 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2023/12/23/Virtio/" target="_self">
+        <a href="/2023/12/23/virtio/Virtio/" target="_self">
           Virtio
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/23/Virtio/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/23/virtio/Virtio/" target="_self">
         <div>
           IO栈
         </div>
@@ -478,13 +539,13 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2023/12/22/auto-ssh/" target="_self">
+        <a href="/2023/12/22/scripts/auto-ssh/" target="_self">
           auto-ssh
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/22/auto-ssh/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/22/scripts/auto-ssh/" target="_self">
         <div>
           使用expect工具实现自动注入账号密码123456789101112131415161718192021222324252627#!/bin/bashif [ $# -ne 2 ]; then    echo &quot;usage: sh copykey.sh hostip password &quot;    exit 1fi# 判断id_rsa秘钥文件是否存在if [ ! -f &quot
         </div>
@@ -510,7 +571,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/linux/" class="category-chain-item">linux</a>
+  <a href="/categories/scripts/" class="category-chain-item">scripts</a>
   
   
 
@@ -541,13 +602,13 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2023/12/22/snipaste-picgo-ubuntu/" target="_self">
+        <a href="/2023/12/22/os_ops/snipaste-picgo-ubuntu/" target="_self">
           snipaste picgo ubuntu
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/22/snipaste-picgo-ubuntu/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/22/os_ops/snipaste-picgo-ubuntu/" target="_self">
         <div>
           flameshot ubuntu 截图工具sudo apt install flameshot Picgo PicGo客户端 下载 AppImage 格式 添加到 Applications vim /usr/share/applications/picgo.desktop 12345[Desktop Entry]Type=ApplicationName=picGoExec=/path/to/pic
         </div>
@@ -604,13 +665,13 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2023/12/20/vm-ubuntu/" target="_self">
+        <a href="/2023/12/20/os_ops/vm-ubuntu/" target="_self">
           vms over ubuntu
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/20/vm-ubuntu/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/20/os_ops/vm-ubuntu/" target="_self">
         <div>
           ubuntu需要修改emulator1&lt;emulator&gt;/usr/bin/qemu-system-x86_64&lt;/emulator&gt; 需要cdrom引导安装系统1234567891011&lt;os&gt;    &lt;bootmenu enable=&#x27;yes&#x27; timeout=&#x27;5000&#x27;/&gt;&lt;/os&gt;&lt
         </div>
@@ -665,13 +726,13 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2023/12/17/wsl/" target="_self">
+        <a href="/2023/12/17/os_ops/wsl/" target="_self">
           WSL
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/17/wsl/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/17/os_ops/wsl/" target="_self">
         <div>
           常用命令 wsl --list wsl --unregister &lt;Dist&gt; wsl --help wsl --version  修改默认用户为 root 找到对应的发行版exe文件：C:\Users\用户名\AppData\Local\Microsoft\WindowsApps\ubuntu1804.exe 执行命令：ubuntu1804.exe config –default-u
         </div>
@@ -726,13 +787,13 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2023/12/10/CSS-Basic/" target="_self">
+        <a href="/2023/12/10/web_dev/CSS-Basic/" target="_self">
           CSS Basic
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/10/CSS-Basic/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/10/web_dev/CSS-Basic/" target="_self">
         <div>
           CSS 整合自  Web前端零基础入门HTML5+CSS3基础教程 MDN WEb Docs CSS   层叠样式表，通过CSS可以设置网页中元素的样式 1 CSS语句1.1 基本语法编写位置  行内样式 只对一个标签生效 1&lt;p style=&quot;color: red;&quot;&gt;red&lt;/p&gt;   head标签中style标签 仅对于当前页面生效 123p &#
         </div>
@@ -781,68 +842,13 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/12/10/VirtDevice/" target="_self">
-          Virt Device
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/10/VirtDevice/" target="_self">
-        <div>
-          模型演变 完全虚拟化: 根据硬件设备规范模拟，对Guest透明，不需要修改 Vhost方案: 将数据面迁移到内核空间 Virtio协议: 半虚拟化，使用Virtqueue传输数据 VT-d: Intel 在硬件层面提供支持，包含DMA重映射、中断重映射等安全方案 SR-IOV(Single Root I&#x2F;O Virtualization): 将一个PCIe设备虚拟成多个功能设备给不同虚机
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-12-10 09:26" pubdate>
-              2023-12-10
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/VirtMachine/" class="category-chain-item">VirtMachine</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/protocol/">#protocol</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
 
 
+  <nav aria-label="navigation">
+    <span class="pagination" id="pagination">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/#board">2</a><a class="extend next" rel="next" href="/page/2/#board"><i class="iconfont icon-arrowright"></i></a>
+    </span>
+  </nav>
 
 
 
