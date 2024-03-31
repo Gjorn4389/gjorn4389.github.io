@@ -28,7 +28,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/va_space_2_pa_space.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/riscv_process_addr_space.png">
 <meta property="article:published_time" content="2023-12-23T01:26:43.000Z">
-<meta property="article:modified_time" content="2024-03-29T17:31:54.611Z">
+<meta property="article:modified_time" content="2024-03-31T14:40:48.713Z">
 <meta property="article:author" content="Gjorn">
 <meta property="article:tag" content="os">
 <meta name="twitter:card" content="summary_large_image">
@@ -225,7 +225,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          666 字
+          1.3k 字
         
       </span>
     
@@ -236,7 +236,7 @@
         
         
         
-          6 分钟
+          12 分钟
         
       </span>
     
@@ -361,6 +361,87 @@
 <li>进程的虚拟内存空间是连续的，对应的物理内存可以是非连续的</li>
 <li>将虚拟地址的最后一页映射到trampoline page，所有地址空间都有一个单独的物理内存页</li>
 <li>用户栈前一页是 guard page，防止栈溢出</li>
+</ol>
+<h1 id="trap-和-系统调用"><a href="#trap-和-系统调用" class="headerlink" title="trap 和 系统调用"></a>trap 和 系统调用</h1><blockquote>
+<p>cpu转交控制权: 系统调用、异常、设备中断，将其都称之为trap<br>trap处理：CPU的硬件操作、汇编指令集、trap处理程序、设备驱动服务例程<br>三种trap来源：用户空间trap、内核空间trap、定时器中断</p>
+</blockquote>
+<ol>
+<li>trap触发，转交控制权到内核</li>
+<li>内核保存寄存器和其他状态</li>
+<li>执行handler代码</li>
+<li>内核恢复寄存器和状态，返回到原来的代码</li>
+</ol>
+<h2 id="trap机制"><a href="#trap机制" class="headerlink" title="trap机制"></a>trap机制</h2><h3 id="寄存器"><a href="#寄存器" class="headerlink" title="寄存器"></a>寄存器</h3><blockquote>
+<p>仅内核态可以读取，每个CPU都有独立的寄存器</p>
+</blockquote>
+<ol>
+<li><code>stvec</code>: trap handler的地址</li>
+<li><code>sepc</code>: 保存程序计数器 <code>pc</code>，当trap恢复的时候，<code>sret</code>会将<code>sepc</code>赋值给<code>pc</code></li>
+<li><code>scause</code>: trap来源的标志位</li>
+<li><code>sscratch</code>: trap handler使用</li>
+<li><code>sstatus</code><ul>
+<li><code>SIE</code>: 判断中断是否启用，通过清除<code>SIE</code>来禁用中断</li>
+<li><code>SPP</code>: 判断trap的来源，用户态 或 内核态</li>
+</ul>
+</li>
+</ol>
+<h3 id="trap硬件操作"><a href="#trap硬件操作" class="headerlink" title="trap硬件操作"></a>trap硬件操作</h3><ol>
+<li>如果 trap 是设备中断，且<code>SIE</code>被清空，不执行任何操作</li>
+<li>清除<code>SIE</code>禁用中断</li>
+<li>将 <code>pc</code> 复制到 <code>sepc</code></li>
+<li>将当前模式 (用户态、内核态) 保存在<code>sstatus</code>的<code>SPP</code>中</li>
+<li>设置<code>scause</code>标志位</li>
+<li>转换为内核模式</li>
+<li>把<code>stvec</code>复制到<code>pc</code></li>
+<li>跳转到 <code>pc</code> 指令，开始执行</li>
+</ol>
+<h2 id="用户态trap"><a href="#用户态trap" class="headerlink" title="用户态trap"></a>用户态trap</h2><ol>
+<li>uservec: 保存用户寄存器(进程TRAPFRAME)</li>
+<li>usertrap: 确定trap的来源分发到不同的handler，</li>
+<li>usertrapret: 保留<code>stvec</code>，用于下一次trap，设置寄存器</li>
+<li>userret: 切换页表至原来的页表</li>
+</ol>
+<h2 id="内核态trap"><a href="#内核态trap" class="headerlink" title="内核态trap"></a>内核态trap</h2><ol>
+<li>kernelvec: 保存所有寄存器(内核栈)、kerneltrap、恢复寄存器</li>
+<li>kerneltrap: 分发任务、恢复<code>sepc</code>和<code>sstatus</code><ul>
+<li>异常：panic</li>
+<li>计时器中断：yield</li>
+</ul>
+</li>
+</ol>
+<h2 id="页面错误异常"><a href="#页面错误异常" class="headerlink" title="页面错误异常"></a>页面错误异常</h2><blockquote>
+<p>用户态异常，内核终止故障进程；内核态异常，panic</p>
+</blockquote>
+<h3 id="页面错误"><a href="#页面错误" class="headerlink" title="页面错误"></a>页面错误</h3><blockquote>
+<p><code>scause</code>: 页面错误类型<br><code>stval</code>：无法翻译的地址</p>
+</blockquote>
+<ol>
+<li>加载页面错误</li>
+<li>存储页面错误</li>
+<li>指令页面错误</li>
+</ol>
+<h4 id="COW-fork"><a href="#COW-fork" class="headerlink" title="COW fork"></a>COW fork</h4><ol>
+<li>父子进程共享物理页面，但只读。</li>
+<li>进程存储页面异常：内核复制错误地址的页面，生成可读写副本。此时返回故障指令，就会使用副本的pte</li>
+</ol>
+<h4 id="lazy-allocation"><a href="#lazy-allocation" class="headerlink" title="lazy allocation"></a>lazy allocation</h4><ol>
+<li>用户态 sbrk 申请内存，此时申请的页表标记为无效。</li>
+<li>出现页面错误后，将页表映射到物理内存</li>
+</ol>
+<h4 id="磁盘分页"><a href="#磁盘分页" class="headerlink" title="磁盘分页"></a>磁盘分页</h4><ol>
+<li>内存换出，保存到磁盘中。</li>
+<li>页面故障，将磁盘中存储的页面，读取到内存中。</li>
+<li>内存页满之后，需要换出内存页表</li>
+</ol>
+<h1 id="中断和设备驱动"><a href="#中断和设备驱动" class="headerlink" title="中断和设备驱动"></a>中断和设备驱动</h1><h2 id="控制台输入"><a href="#控制台输入" class="headerlink" title="控制台输入"></a>控制台输入</h2><h3 id="UART"><a href="#UART" class="headerlink" title="UART"></a>UART</h3><ol>
+<li>控制台驱动通过 UART串口，接收键入字符。QEMU模拟了UART硬件，连接到键盘和显示器</li>
+<li>UART对于软件，可以看做内存映射的控制寄存器</li>
+<li><code>consoleinit</code>: 初始化UART硬件，对字节输入生成接收中断，对字节输出生成发送中断</li>
+</ol>
+<h2 id="定时器中断"><a href="#定时器中断" class="headerlink" title="定时器中断"></a>定时器中断</h2><ol>
+<li>定时器中断来自每个CPU的时钟硬件</li>
+<li><code>timerinit</code>: 在一定延迟后生成中断、保存寄存器、使能定时器中断</li>
+<li><code>timervec</code>: 触发一次软件中断</li>
 </ol>
 
                 
