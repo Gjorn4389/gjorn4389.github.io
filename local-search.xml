@@ -4,6 +4,87 @@
   
   
   <entry>
+    <title>mwait</title>
+    <link href="/2024/11/24/linux/mwait/"/>
+    <url>/2024/11/24/linux/mwait/</url>
+    
+    <content type="html"><![CDATA[<h1 id="mwait-指令"><a href="#mwait-指令" class="headerlink" title="mwait 指令"></a>mwait 指令</h1><blockquote><p>A hint that allows the processor to stop instruction execution and enter an implementation-dependent optimized state until occurrence of a class of events.<br>MWAIT instruction provides hints to allow the processor to enter an implementation-dependent optimized state. There are two principal targeted usages: address-range monitor and advanced power management. Both usages of MWAIT require the use of the MONITOR instruction.</p></blockquote><p>‌MWAIT是一种CPU处理器指令，主要用于让CPU进入低功耗状态以节省能源，并等待一些事件的发生‌。当CPU使用MWAIT指令时，它可以在不消耗太多能源的情况下监控外部设备的事件，如外部设备的中断或唤醒信号。这种方式不仅节省了电力，还能提高系统的响应速度，因为CPU不必频繁地从低功耗状态中唤醒‌。</p><h1 id="内核如何使用？"><a href="#内核如何使用？" class="headerlink" title="内核如何使用？"></a>内核如何使用？</h1><p>X86_FEATURE_MWAIT (arch&#x2F;x86&#x2F;include&#x2F;asm&#x2F;cpufeatures.h)</p><p>mwait实现 -&gt; arch&#x2F;x86&#x2F;include&#x2F;asm&#x2F;mwait.h</p><p>mwait_idle_with_hints</p><p>intel-idle</p><p>arch&#x2F;x86&#x2F;kernel&#x2F;process.c</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * MONITOR/MWAIT with no hints, used for default C1 state. This invokes MWAIT</span><br><span class="hljs-comment"> * with interrupts enabled and no flags, which is backwards compatible with the</span><br><span class="hljs-comment"> * original MWAIT implementation.</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">static</span> __cpuidle <span class="hljs-type">void</span> <span class="hljs-title function_">mwait_idle</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br><span class="hljs-keyword">if</span> (!current_set_polling_and_test()) &#123;<br><span class="hljs-keyword">if</span> (this_cpu_has(X86_BUG_CLFLUSH_MONITOR)) &#123;<br>mb(); <span class="hljs-comment">/* quirk */</span><br>clflush((<span class="hljs-type">void</span> *)&amp;current_thread_info()-&gt;flags);<br>mb(); <span class="hljs-comment">/* quirk */</span><br>&#125;<br><br>__monitor((<span class="hljs-type">void</span> *)&amp;current_thread_info()-&gt;flags, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br><span class="hljs-keyword">if</span> (!need_resched()) &#123;<br>__sti_mwait(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br>raw_local_irq_disable();<br>&#125;<br>&#125;<br>__current_clr_polling();<br>&#125;<br><br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">thread_info</span> &#123;</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>flags;<span class="hljs-comment">/* low level flags */</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>syscall_work;<span class="hljs-comment">/* SYSCALL_WORK_ flags */</span><br>u32status;<span class="hljs-comment">/* thread synchronous flags */</span><br><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> CONFIG_SMP</span><br>u32cpu;<span class="hljs-comment">/* current CPU */</span><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>&#125;;<br></code></pre></td></tr></table></figure><h1 id="KVM-支持虚机mwait"><a href="#KVM-支持虚机mwait" class="headerlink" title="KVM 支持虚机mwait"></a>KVM 支持虚机mwait</h1><p>kvm_emulate_mwait</p><p>kvm_emulate_monitor_mwait</p><p>kvm_vm_ioctl_enable_cap</p><p>vmx_exec_control</p><p>EXIT_REASON_MWAIT_INSTRUCTION</p><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.felixcloutier.com/x86/mwait">mwait指令</a></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>linux</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>linux</tag>
+      
+      <tag>kvm</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>bond</title>
+    <link href="/2024/08/16/linux/bond/"/>
+    <url>/2024/08/16/linux/bond/</url>
+    
+    <content type="html"><![CDATA[<h1 id="mux-machine状态机变化"><a href="#mux-machine状态机变化" class="headerlink" title="mux machine状态机变化"></a>mux machine状态机变化</h1><p><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/bond_3ad_mux_machine.png" alt="mux_machine"></p><ol><li><pre><code class="hljs">    LACP_Activity: 端口在链路控制中的主从状态，0表示Passive, 1表示Active。</code></pre></li><li><pre><code class="hljs">    LACP_Timeout: 超时时间，0表示长超时，1表示短超时</code></pre></li><li><pre><code class="hljs">    Aggregation: 表示端口的聚合能力。 TRUE(1)表示链路是可聚合的，FALSE(0)表示链路是独立链路，不可聚合</code></pre></li><li><pre><code class="hljs">    Synchronization: 表示端口当前聚合是否完成。TRUE(1)表示发送的链路处于IN_SYNC状态，即端口已被分配到正确的聚合组中， FALSE(0)表示链路为OUT_OF_SYNC状态，即端口还没有选择正确的聚合组</code></pre></li><li><pre><code class="hljs">    Collecting: TRUE(1)表示当前链路收包enable, 否则为FALSE(0)</code></pre></li><li><pre><code class="hljs">    Distributing: TRUE(1)表示当前链路发包enable, 否则为FALSE(0)</code></pre></li><li><pre><code class="hljs">    Defaulted： TRUE(1)表示Actor使用的Partner信息来自管理员配置的默认值。FALSE(0)表示Actor使用的Partner信息来自接收的LACPDU</code></pre></li><li><pre><code class="hljs">    Expired: TRUE(1)表示Actor RX状态机处于超时状态，否则不在超时状态。</code></pre></li></ol><p><img src="https://raw.githubusercontent.com/Gjorn4389/Gjorn4389.github.io/source/images/bond_3ad_port_valiables_def.png" alt="port_variables_definition"></p><ol><li>AD_MUX_DETACHED -&gt; AD_MUX_WAITING: AD_PORT_SELECTED &#x3D;&#x3D; True || AD_PORT_STANDBY &#x3D;&#x3D; True</li><li>AD_MUX_WAITING -&gt; AD_MUX_DETACHED: SELECTED &#x3D;&#x3D; FALSE</li><li>AD_MUX_WAITING -&gt; AD_MUX_ATTACHED<ol><li>port-&gt;sm_vars |&#x3D; AD_PORT_READY_N</li><li>该 aggregator 的所有 Port都READY_N了  &#x3D;&#x3D;&#x3D;&#x3D;&gt; AD_PORT_READY</li></ol></li><li>AD_MUX_ATTACHED -&gt; AD_MUX_DETACHED</li><li>AD_MUX_DISTRIBUTING -&gt;</li></ol><p>如果前后状态不一致：<code>port-&gt;ntt = true;</code>  表明需要发送报文</p><p>修改actor_oper_port_state，告知交换机当前端口的状态</p><p>LACP_STATE_SYNCHRONIZATION    说明agg是active的</p><h2 id="AD-MUX-DETACHED"><a href="#AD-MUX-DETACHED" class="headerlink" title="AD_MUX_DETACHED"></a>AD_MUX_DETACHED</h2><h2 id="AD-MUX-WAITING"><a href="#AD-MUX-WAITING" class="headerlink" title="AD_MUX_WAITING"></a>AD_MUX_WAITING</h2><h2 id="AD-MUX-ATTACHED"><a href="#AD-MUX-ATTACHED" class="headerlink" title="AD_MUX_ATTACHED"></a>AD_MUX_ATTACHED</h2><h2 id="AD-MUX-COLLECTING-DISTRIBUTING"><a href="#AD-MUX-COLLECTING-DISTRIBUTING" class="headerlink" title="AD_MUX_COLLECTING_DISTRIBUTING"></a>AD_MUX_COLLECTING_DISTRIBUTING</h2><h2 id="AD-MUX-COLLECTING"><a href="#AD-MUX-COLLECTING" class="headerlink" title="AD_MUX_COLLECTING"></a>AD_MUX_COLLECTING</h2><h2 id="AD-MUX-DISTRIBUTING"><a href="#AD-MUX-DISTRIBUTING" class="headerlink" title="AD_MUX_DISTRIBUTING"></a>AD_MUX_DISTRIBUTING</h2><p>一般的流程<br>AD_MUX_DETACHED  -&gt;  AD_MUX_WAITING   -&gt; AD_MUX_ATTACHED  -&gt; AD_MUX_COLLECTING_DISTRIBUTING</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>linux</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>linux</tag>
+      
+      <tag>bond</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>kvm_init</title>
+    <link href="/2024/07/17/qemu/kvm_init/"/>
+    <url>/2024/07/17/qemu/kvm_init/</url>
+    
+    <content type="html"><![CDATA[<h1 id="kvm-init-函数"><a href="#kvm-init-函数" class="headerlink" title="kvm_init 函数"></a>kvm_init 函数</h1><ol><li>确定有多少个CPU：num_cpus[SMP, hotpluggable]</li><li>KVMParkedVcpu { vcpu_id, kvm_fd } 列表记录vcpu</li><li>检查KVM版本</li><li>kvm创建虚机，返回一个fd：kvm_ioctl(s, KVM_CREATE_VM, type);</li></ol>]]></content>
+    
+    
+    <categories>
+      
+      <category>qemu</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>kvm</tag>
+      
+      <tag>qemu</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>VCPU Hotplug</title>
     <link href="/2024/03/13/libvirt/vcpu_hotplug/"/>
     <url>/2024/03/13/libvirt/vcpu_hotplug/</url>
